@@ -1,6 +1,8 @@
-package com.minehut.kingdomhost;
+package com.minehut.kingdomhost.server;
 
 import com.minehut.commons.common.uuid.NameFetcher;
+import com.minehut.kingdomhost.KingdomHost;
+import com.minehut.kingdomhost.events.ServerShutdownEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -10,11 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class KingdomServerThread extends Thread {
+public class Server extends Thread {
 
-	private UUID uuid;
+	private int runnableID;
 	boolean online = false;
-	private int id = -1;
 
 	InputStream is;
 	ProcessBuilder slave;
@@ -23,18 +24,22 @@ public class KingdomServerThread extends Thread {
 
 	public int currentPlayers = 0;
 	public String currentMap = "NULL";
-	public UUID ownerUUID;
 	public long lastUpdated;
 
-	public KingdomServerThread(UUID owner, int id) {
-		this.uuid = UUID.randomUUID();
+	//Info
+	int id;
+	String kingdomName;
+	int maxPlayers;
+	int borderSize;
+	int maxPlugins;
+	UUID ownerUUID;
+	int port;
+
+	public Server(UUID owner, int id, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins) {
 		this.id = id;
 		this.ownerUUID = owner;
 		this.online = true;
-	}
-
-	private UUID getUUID() {
-		return this.uuid;
+		this.runnableID = this.monitorOnlineStatus();
 	}
 
 	public void runCommand(String cmd) {
@@ -112,7 +117,7 @@ public class KingdomServerThread extends Thread {
 			}
 			System.out.println("server closed, thread finished");
 			this.theProcess.destroy();
-			Bukkit.getPluginManager().callEvent(new KingdomShutdownEvent(id));
+			callShutdownEvent();
 			this.online = false;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -123,6 +128,31 @@ public class KingdomServerThread extends Thread {
 		return online;
 	}
 
+	private void callShutdownEvent() {
+		Bukkit.getPluginManager().callEvent(new ServerShutdownEvent(this));
+	}
+
+	private int monitorOnlineStatus() {
+		return Bukkit.getServer().getScheduler().scheduleAsyncRepeatingTask(KingdomHost.getPlugin(), new Runnable() {
+			@Override
+			public void run() {
+				long difference = (System.currentTimeMillis() - lastUpdated) / 1000;
+				if (difference >= 10) {
+					if (theProcess.isAlive()) {
+						theProcess.destroy();
+						callShutdownEvent();
+						Bukkit.getServer().getScheduler().cancelTask(runnableID);
+					}
+				}
+			}
+		}, 20, 20 * 10);
+	}
+
+	public void forceShutdown() {
+		this.theProcess.destroy();
+		callShutdownEvent();
+	}
+
 	public void setOnline(boolean online) {
 		this.online = online;
 	}
@@ -131,11 +161,39 @@ public class KingdomServerThread extends Thread {
 		return ownerUUID;
 	}
 
-	public int getKingdomID() {
-		return this.id;
-	}
-
 	public int getCurrentPlayers() {
 		return currentPlayers;
+	}
+
+	public int getKingdomID() {
+		return id;
+	}
+
+	public String getKingdomName() {
+		return kingdomName;
+	}
+
+	public int getMaxPlayers() {
+		return maxPlayers;
+	}
+
+	public int getBorderSize() {
+		return borderSize;
+	}
+
+	public int getMaxPlugins() {
+		return maxPlugins;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public long getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setKingdomName(String kingdomName) {
+		this.kingdomName = kingdomName;
 	}
 }
