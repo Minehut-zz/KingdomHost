@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="kingdomhost">
+    <output-path>$USER_HOME$/minehut/output/plugins</output-path>
+    <root id="archive" name="kingdomhost.jar">
+      <element id="module-output" name="KingdomHost" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+    </root>
+  </artifact>
+</component>
