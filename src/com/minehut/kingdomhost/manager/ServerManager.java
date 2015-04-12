@@ -48,13 +48,13 @@ public class ServerManager implements Listener {
 		return 0;
 	}
 
-	public void connect(Player player, String name) {
+	public boolean connect(Player player, String name) {
 		/* Try to join online server */
 		for (Server server : this.servers) {
 			if (server.getKingdomName().equals(name)) {
 				player.sendMessage("Sending you to " + C.aqua + name);
-				Bungee.sendToServer(this.host, player, "kingdom" + server.getPort());
-				return;
+				Bungee.sendToServer(this.host, player, "kingdom" + Integer.toString(server.getPort() - 60000));
+				return true;
 			}
 		}
 
@@ -67,10 +67,16 @@ public class ServerManager implements Listener {
 
 				/* Attempt to connect once more. Delay for startup time */
 				connect(player, name, 10);
+				return true;
 			}
 		}
 
-		player.sendMessage("No Kingdom was found with the name '" + name + "'. Please make sure caps are correct.");
+		player.sendMessage("");
+		player.sendMessage("");
+		player.sendMessage("Your requested server could not be found.");
+		player.sendMessage("Please ensure your caps and spelling are correct");
+		player.sendMessage("");
+		return false;
 	}
 
 	private void connect(Player player, String name, int delay) {
@@ -87,23 +93,38 @@ public class ServerManager implements Listener {
 			@Override
 			public void run() {
 
+				/* Check if name is available */
+				if (!isNewName(player, name)) {
+					return;
+				}
+
 				/* Check if maxed out */
 				if (maxRuntimeServers()) {
-					player.sendMessage(C.red + "Our servers are currently full. Please wait to create a new Server");
+					player.sendMessage("");
+					player.sendMessage("");
+					player.sendMessage(C.white + "Our servers are currently full. Please wait to create a new Server");
+					player.sendMessage("");
+					return;
 				}
 
 				/* Check for existing server */
 				for (Server server : servers) {
 					if (server.getOwnerUUID() == player.getUniqueId()) {
-						player.sendMessage(C.red + "You already have a Kingdom. Please use " + C.gold + "/kingdom join");
-						player.sendMessage(C.red + "To reset your Kingdom, use " + C.gold + "/kingdom reset [name]");
+						player.sendMessage("");
+						player.sendMessage("");
+						player.sendMessage(C.white + "You already have a Kingdom. Please use " + C.aqua + "/join");
+						player.sendMessage(C.white + "To reset your Kingdom, use " + C.aqua + "/reset");
+						player.sendMessage("");
 						return;
 					}
 				}
 
 				/* Begin creation process */
-				player.sendMessage(C.gold + "Creating your new Kingdom");
-				player.sendMessage(C.gold + "This may take a few moments...");
+				player.sendMessage("");
+				player.sendMessage("");
+				player.sendMessage(C.white + "Creating your new Kingdom");
+				player.sendMessage(C.white + "This may take a few moments...");
+				player.sendMessage("");
 
 				/* Size is greater than index */
 				int id = offlineServers.size();
@@ -134,6 +155,10 @@ public class ServerManager implements Listener {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this.host, new Runnable() {
 			@Override
 			public void run() {
+				/* Check if name is available */
+				if (!isNewName(player, name)) {
+					return;
+				}
 
 				/* Check if maxed out */
 				if (maxRuntimeServers()) {
@@ -193,7 +218,7 @@ public class ServerManager implements Listener {
 		OfflineServer offlineServer = null;
 		for (OfflineServer os : this.offlineServers) {
 			if (os.getOwnerUUID() == player.getUniqueId()) {
-				os = os;
+				offlineServer = os;
 				break;
 			}
 		}
@@ -273,13 +298,6 @@ public class ServerManager implements Listener {
 
 				System.out.println("Successfully loaded offline-server: " + name);
 			}
-
-//			for (String uuid : config.getConfigurationSection("kingdoms").getKeys(false)) {
-//				//Inputting null for Server. On create we will check if null and replace.
-//				ServerInfo kingdomInfo = infoCreator(uuid, Integer.parseInt(config.getString("kingdoms." + uuid)), )
-//				kingdoms.put(UUID.fromString(uuid), Integer.parseInt(config.getString("kingdoms." + uuid)), null);
-//				System.out.println("Successfully loaded kingdom config for owner: " + uuid);
-//			}
 		}
 	}
 
@@ -338,5 +356,27 @@ public class ServerManager implements Listener {
 
 	public ArrayList<Server> getServers() {
 		return servers;
+	}
+
+	public KingdomHost getHost() {
+		return host;
+	}
+
+	public Server getServer(String name) {
+		for (Server server : this.servers) {
+			if (server.getName().equals(name)) {
+				return  server;
+			}
+		}
+		return null;
+	}
+
+	public OfflineServer getServer(Player player) {
+		for (OfflineServer offlineServer : this.offlineServers) {
+			if (offlineServer.getOwnerUUID() == player.getUniqueId()) {
+				return offlineServer;
+			}
+		}
+		return null;
 	}
 }
