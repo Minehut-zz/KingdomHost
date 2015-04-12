@@ -151,14 +151,10 @@ public class ServerManager implements Listener {
 		});
 	}
 
-	public void resetServer(final Player player, final String name, final int id) {
+	public void resetServer(final Player player) {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this.host, new Runnable() {
 			@Override
 			public void run() {
-				/* Check if name is available */
-				if (!isNewName(player, name)) {
-					return;
-				}
 
 				/* Check if maxed out */
 				if (maxRuntimeServers()) {
@@ -184,6 +180,7 @@ public class ServerManager implements Listener {
 				/* Check to see if server existed */
 				if (offlineServer == null) {
 					player.sendMessage(C.red + "You do not have an existing server.");
+					player.sendMessage(C.red + "Create one with " + C.aqua + "/create (name)");
 					return;
 				}
 
@@ -200,7 +197,7 @@ public class ServerManager implements Listener {
 				FileUtil.editServerProperties(id, port);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins());
+				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins());
 				servers.add(server);
 				server.start();
 
@@ -208,7 +205,7 @@ public class ServerManager implements Listener {
 				saveKingdomToConfig(offlineServer);
 
 				/* Connect after server has started (delay) */
-				connect(player, name, 10);
+				connect(player, offlineServer.getKingdomName(), 10);
 
 			}
 		}, 1);
