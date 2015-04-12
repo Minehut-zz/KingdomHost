@@ -33,7 +33,7 @@ public class MyKingdom implements Listener {
         Player player = event.getPlayer();
         if (player.getItemInHand() != null && player.getItemInHand().getItemMeta() != null) {
             if (player.getItemInHand().getItemMeta().getDisplayName() != null) {
-                if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(getCurrentServersItem().getItemMeta().getDisplayName())) {
+                if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(getItem().getItemMeta().getDisplayName())) {
                     event.setCancelled(true);
 
 
@@ -49,7 +49,7 @@ public class MyKingdom implements Listener {
         }
     }
 
-    public static ItemStack getCurrentServersItem() {
+    public static ItemStack getItem() {
         return ItemStackFactory.createItem(Material.BOOK, C.yellow + C.bold + "JOIN YOUR KINGDOM");
     }
 }

@@ -33,6 +33,7 @@ public class Server extends Thread {
 	int borderSize;
 	int maxPlugins;
 	UUID ownerUUID;
+	String ownerName;
 	int port;
 
 	public Server(UUID owner, int id, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins) {
@@ -80,21 +81,17 @@ public class Server extends Thread {
 
 			System.out.println("Server started, getting output");
 
-			if (Bukkit.getPlayer(getOwnerUUID()) != null) {
-
-				String name = "";
-				try {
-					name = new NameFetcher(Arrays.asList(getOwnerUUID())).call().get(getOwnerUUID());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				runCommand("c-settings " + "setOwner " + name);
-				runCommand("whitelist add " + name);
-				runCommand("op " + name);
-				runCommand("Enjoy!");
-
-				Player player = Bukkit.getPlayer(getOwnerUUID());
+			try {
+				this.ownerName = new NameFetcher(Arrays.asList(this.ownerUUID)).call().get(this.ownerUUID);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
+			/* Host Commands */
+			runCommand("set_id " + Integer.toString(this.id));
+			runCommand("set_owner " + this.ownerUUID.toString());
+			runCommand("op " + this.ownerName);
+			runCommand("whitelist add " + this.ownerName);
 
 			BufferedReader br = new BufferedReader( new InputStreamReader(is));
 			String line = "";

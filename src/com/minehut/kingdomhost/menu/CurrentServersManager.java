@@ -1,6 +1,5 @@
 package com.minehut.kingdomhost.menu;
 
-import com.minehut.commons.common.bungee.Bungee;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.items.ItemStackFactory;
 import com.minehut.kingdomhost.KingdomHost;
@@ -73,7 +72,7 @@ public class CurrentServersManager implements Listener {
         Player player = event.getPlayer();
         if (player.getItemInHand() != null && player.getItemInHand().getItemMeta() != null) {
             if (player.getItemInHand().getItemMeta().getDisplayName() != null) {
-                if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(getCurrentServersItem().getItemMeta().getDisplayName())) {
+                if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(getItem().getItemMeta().getDisplayName())) {
                     event.setCancelled(true);
                     player.openInventory(this.menu);
                 }
@@ -81,7 +80,7 @@ public class CurrentServersManager implements Listener {
         }
     }
 
-    public static ItemStack getCurrentServersItem() {
+    public static ItemStack getItem() {
         return ItemStackFactory.createItem(Material.BOOK, C.yellow + C.bold + "KINGDOM SERVERS");
     }
 
