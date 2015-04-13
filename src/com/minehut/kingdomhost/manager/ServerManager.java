@@ -8,6 +8,7 @@ import com.minehut.kingdomhost.events.ServerShutdownEvent;
 import com.minehut.kingdomhost.server.Server;
 import com.minehut.kingdomhost.offline.OfflineServer;
 import com.minehut.kingdomhost.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -36,15 +37,23 @@ public class ServerManager implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, this.host);
 	}
 
-	int getOpenPort() {
-		for (int i = 60001; i < 60500; i++) {
-			for (Server server : this.servers) {
-				if (server.getPort() == i) {
-					continue;
-				}
-				return i;
+	boolean usedPort(int port) {
+		for (Server server : this.servers) {
+			if (server.getPort() == port) {
+				return true;
 			}
 		}
+		return false;
+	}
+
+	int getOpenPort() {
+
+		for (int port = 60001; port < 60500; port++) {
+			if (!usedPort(port)) {
+				return port;
+			}
+		}
+
 		return 0;
 	}
 
@@ -61,12 +70,15 @@ public class ServerManager implements Listener {
 		/* Server isn't online, try to start it */
 		for (OfflineServer os : this.offlineServers) {
 			if (os.getKingdomName().equals(name)) {
-				Server server = new Server(os.getOwnerUUID(), os.getId(), getOpenPort(), os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins());
+				int port = getOpenPort();
+				FileUtil.editServerProperties(os.getId(), port);
+
+				Server server = new Server(os.getOwnerUUID(), os.getId(), port, os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins());
 				this.servers.add(server);
 				server.start();
 
 				/* Attempt to connect once more. Delay for startup time */
-				connect(player, name, 10);
+				connect(player, name, 20);
 				return true;
 			}
 		}
@@ -101,7 +113,6 @@ public class ServerManager implements Listener {
 				/* Check if maxed out */
 				if (maxRuntimeServers()) {
 					player.sendMessage("");
-					player.sendMessage("");
 					player.sendMessage(C.white + "Our servers are currently full. Please wait to create a new Server");
 					player.sendMessage("");
 					return;
@@ -109,8 +120,7 @@ public class ServerManager implements Listener {
 
 				/* Check for existing server */
 				for (Server server : servers) {
-					if (server.getOwnerUUID() == player.getUniqueId()) {
-						player.sendMessage("");
+					if (server.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
 						player.sendMessage("");
 						player.sendMessage(C.white + "You already have a Kingdom. Please use " + C.aqua + "/join");
 						player.sendMessage(C.white + "To reset your Kingdom, use " + C.aqua + "/reset");
@@ -121,13 +131,11 @@ public class ServerManager implements Listener {
 
 				/* Begin creation process */
 				player.sendMessage("");
-				player.sendMessage("");
 				player.sendMessage(C.white + "Creating your new Kingdom");
-				player.sendMessage(C.white + "This may take a few moments...");
+				player.sendMessage("This may take up to 30 seconds");
 				player.sendMessage("");
 
-				/* Size is greater than index */
-				int id = offlineServers.size();
+				int id = offlineServers.size() + 1;
 				int port = getOpenPort();
 
 				/* todo: rank-based perks */
@@ -136,6 +144,9 @@ public class ServerManager implements Listener {
 				/* Copy files */
 				FileUtil.copySampleServer(id);
 				FileUtil.editServerProperties(id, port);
+
+				/* Add to offline list */
+				offlineServers.add(offlineServer);
 
 				/* Start up server */
 				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins());
@@ -146,7 +157,7 @@ public class ServerManager implements Listener {
 				saveKingdomToConfig(offlineServer);
 
 				/* Connect after server has started (delay) */
-				connect(player, name, 10);
+				connect(player, name, 20);
 			}
 		});
 	}
@@ -163,8 +174,9 @@ public class ServerManager implements Listener {
 
 				/* Shutdown server */
 				for (Server server : servers) {
-					if (server.getOwnerUUID() == player.getUniqueId()) {
+					if (server.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
 						server.forceShutdown();
+						servers.remove(server);
 						break;
 					}
 				}
@@ -172,40 +184,51 @@ public class ServerManager implements Listener {
 				/* Use data from offline-server */
 				OfflineServer offlineServer = null;
 				for (OfflineServer os : offlineServers) {
-					if (os.getOwnerUUID() == player.getUniqueId()) {
+					if (os.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
 						offlineServer = os;
 					}
 				}
 
 				/* Check to see if server existed */
 				if (offlineServer == null) {
+					player.sendMessage("");
 					player.sendMessage(C.red + "You do not have an existing server.");
 					player.sendMessage(C.red + "Create one with " + C.aqua + "/create (name)");
+					player.sendMessage("");
 					return;
 				}
 
 				/* Begin creation process */
-				player.sendMessage(C.gold + "Creating your new Kingdom");
-				player.sendMessage(C.gold + "This may take a few moments...");
+				player.sendMessage("");
+				player.sendMessage("Creating your new Kingdom.");
+				player.sendMessage("This may take up to 30 seconds...");
+				player.sendMessage("");
 
 				/* Size is greater than index */
 				int id = offlineServer.getId();
 				int port = getOpenPort();
 
+				/* Delete */
+				try {
+					FileUtils.deleteDirectory(new File("/home/kingdoms/kingdom" + offlineServer.getId()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
 				/* Copy files */
 				FileUtil.copySampleServer(id);
 				FileUtil.editServerProperties(id, port);
+
+				/* Add to offline list */
+				offlineServers.add(offlineServer);
 
 				/* Start up server */
 				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins());
 				servers.add(server);
 				server.start();
 
-				/* Save to config */
-				saveKingdomToConfig(offlineServer);
-
 				/* Connect after server has started (delay) */
-				connect(player, offlineServer.getKingdomName(), 10);
+				connect(player, offlineServer.getKingdomName(), 20);
 
 			}
 		}, 1);
@@ -214,7 +237,7 @@ public class ServerManager implements Listener {
 	public void changeName(Player player, String name) {
 		OfflineServer offlineServer = null;
 		for (OfflineServer os : this.offlineServers) {
-			if (os.getOwnerUUID() == player.getUniqueId()) {
+			if (os.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
 				offlineServer = os;
 				break;
 			}
@@ -236,7 +259,12 @@ public class ServerManager implements Listener {
 		}
 
 		/* Update config */
-		saveKingdomToConfig(offlineServer);
+		updateConfig(offlineServer);
+
+		/* Notify Player */
+		player.sendMessage("");
+		player.sendMessage("You have changed your kingdom name to " + C.aqua + name);
+		player.sendMessage("");
 	}
 
 	@EventHandler
@@ -313,31 +341,52 @@ public class ServerManager implements Listener {
 		FileConfiguration config = YamlConfiguration.loadConfiguration(mapConfigFile);
 		int id = server.getId();
 
-		if (config.getConfigurationSection("kingdoms." + id) != null) {
-			F.debug("Creating new values in config");
-			/* Doesn't exist, make new section */
-			config.createSection("kingdoms." + id);
-			config.getConfigurationSection("kingdoms." + id).set("name", server.getKingdomName());
-			config.getConfigurationSection("kingdoms." + id).set("ownerUUID", server.getOwnerUUID().toString());
-			config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
-			config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
-			config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
+		/* Doesn't exist, make new section */
+		config.createSection("kingdoms." + id);
 
-			try {
-				config.save(mapConfigFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			F.debug("Changing existing values of config");
-			/* Exists, modify it */
-			config.getConfigurationSection("kingdoms." + id).set("name", server.getKingdomName());
-			config.getConfigurationSection("kingdoms." + id).set("ownerUUID", server.getOwnerUUID().toString());
-			config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
-			config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
-			config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
+
+		config.getConfigurationSection("kingdoms." + id).set("name", server.getKingdomName());
+		config.getConfigurationSection("kingdoms." + id).set("ownerUUID", server.getOwnerUUID().toString());
+		config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
+		config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
+		config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
+
+		try {
+			config.save(mapConfigFile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
+	}
+
+	void updateConfig(OfflineServer server) {
+		File mapConfigFile = new File(this.host.getDataFolder(), "servers.yml");
+
+		if (!mapConfigFile.exists()) {
+			try {
+				mapConfigFile.createNewFile();
+				Bukkit.getServer().getLogger().severe(ChatColor.RED + "Had to create new servers.yml!");
+				return;
+			} catch (IOException e) {
+				Bukkit.getServer().getLogger().severe(ChatColor.RED + "Could not create servers.yml!");
+			}
+		}
+		FileConfiguration config = YamlConfiguration.loadConfiguration(mapConfigFile);
+		int id = server.getId();
+
+		/* Exists, no need to create new section */
+
+		config.getConfigurationSection("kingdoms." + id).set("name", server.getKingdomName());
+		config.getConfigurationSection("kingdoms." + id).set("ownerUUID", server.getOwnerUUID().toString());
+		config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
+		config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
+		config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
+
+		try {
+			config.save(mapConfigFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean maxRuntimeServers() {
@@ -370,7 +419,7 @@ public class ServerManager implements Listener {
 
 	public OfflineServer getServer(Player player) {
 		for (OfflineServer offlineServer : this.offlineServers) {
-			if (offlineServer.getOwnerUUID() == player.getUniqueId()) {
+			if (offlineServer.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
 				return offlineServer;
 			}
 		}

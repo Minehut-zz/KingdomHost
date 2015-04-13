@@ -1,5 +1,7 @@
 package com.minehut.kingdomhost.util;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,12 +68,15 @@ public class FileUtil {
     }
 
     public static void copySampleServer(int id) {
+
         try {
             File source = new File("/home/kingdoms/sampleKingdom");
             File target = new File("/home/kingdoms/kingdom" + Integer.toString(id));
 
-            ArrayList<String> ignore = new ArrayList<String>(Arrays.asList("uid.dat", "session.dat"));
-            if (!ignore.contains(source.getName())) {
+            FileUtils.deleteDirectory(target);
+
+//            ArrayList<String> ignore = new ArrayList<String>(Arrays.asList("uid.dat", "session.dat"));
+//            if (!ignore.contains(source.getName())) {
                 if (source.isDirectory()) {
                     if (!target.exists())
                         target.mkdirs();
@@ -91,7 +96,7 @@ public class FileUtil {
                     in.close();
                     out.close();
                 }
-            }
+//            }
 
         } catch (IOException e) {
 

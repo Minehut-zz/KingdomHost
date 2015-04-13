@@ -1,15 +1,13 @@
 package com.minehut.kingdomhost.server;
 
+import com.minehut.commons.common.chat.F;
 import com.minehut.commons.common.uuid.NameFetcher;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.events.ServerShutdownEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class Server extends Thread {
@@ -17,27 +15,31 @@ public class Server extends Thread {
 	private int runnableID;
 	boolean online = false;
 
-	InputStream is;
-	ProcessBuilder slave;
-	Process theProcess;
-	PrintWriter writer;
+	private InputStream is;
+	private ProcessBuilder slave;
+	private Process theProcess;
+	private PrintWriter writer;
 
 	public int currentPlayers = 0;
-	public String currentMap = "NULL";
 	public long lastUpdated;
 
 	//Info
-	int id;
-	String kingdomName;
-	int maxPlayers;
-	int borderSize;
-	int maxPlugins;
-	UUID ownerUUID;
-	String ownerName;
-	int port;
+	private int kingdomID;
+	private String kingdomName;
+	private int maxPlayers;
+	private int borderSize;
+	private int maxPlugins;
+	private UUID ownerUUID;
+	private String ownerName;
+	private int port;
 
-	public Server(UUID owner, int id, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins) {
-		this.id = id;
+	public Server(UUID owner, int kingdomID, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins) {
+		this.kingdomID = kingdomID;
+		this.kingdomName = kingdomName;
+		this.port = port;
+		this.maxPlayers = maxPlayers;
+		this.borderSize = borderSize;
+		this.maxPlayers = maxPlugins;
 		this.ownerUUID = owner;
 		this.online = true;
 		this.runnableID = this.monitorOnlineStatus();
@@ -54,17 +56,14 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
-		if (id==-1)
+		if (kingdomID ==-1)
 			return;
 		try {
+
 			System.out.println("Starting server..");
 			this.online = true;
 
-			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.id) + "/");
-
-			final List<String> commands = new ArrayList<String>();
-			commands.add("cmd -c chmod 775 start.sh");
-			commands.add("./start.sh");
+			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/");
 
 			ProcessBuilder chmod = new ProcessBuilder("chmod", "775", "start.sh");
 			chmod.directory(executorDirectory);
@@ -73,7 +72,6 @@ public class Server extends Thread {
 
 			this.slave = new ProcessBuilder("./start.sh");
 			this.slave.directory(executorDirectory);
-
 			this.theProcess = this.slave.start();
 
 			this.writer = new PrintWriter(new OutputStreamWriter(this.theProcess.getOutputStream()));
@@ -84,20 +82,21 @@ public class Server extends Thread {
 			try {
 				this.ownerName = new NameFetcher(Arrays.asList(this.ownerUUID)).call().get(this.ownerUUID);
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
+				F.log("error getting player name");
 			}
 
 			/* Host Commands */
-			runCommand("set_id " + Integer.toString(this.id));
-			runCommand("set_owner " + this.ownerUUID.toString());
+			runCommand("set_id " + Integer.toString(this.getKingdomID()));
+			runCommand("set_owner_uuid " + this.ownerUUID.toString());
+			runCommand("set_owner_name " + this.ownerName);
 			runCommand("op " + this.ownerName);
 			runCommand("whitelist add " + this.ownerName);
 
-			BufferedReader br = new BufferedReader( new InputStreamReader(is));
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
 			String line = "";
-
 			while ((line = br.readLine()) != null) {
-
 				if (line.contains("kingdom_")) {
 					String[] slaveCommandParser = line.split("_")[1].split(":");
 
@@ -105,12 +104,8 @@ public class Server extends Thread {
 						this.currentPlayers = Integer.parseInt(slaveCommandParser[1]);
 						this.lastUpdated = System.currentTimeMillis();
 					}
-					else if (slaveCommandParser[0].equalsIgnoreCase("currentmap")) {
-						this.currentMap = slaveCommandParser[1];
-						this.lastUpdated = System.currentTimeMillis();
-					}
 				}
-//				System.out.println(line); //prints out server input
+				System.out.println("<" + this.kingdomName + ">: " + line); //prints out server input
 			}
 			System.out.println("server closed, thread finished");
 			this.theProcess.destroy();
@@ -118,6 +113,7 @@ public class Server extends Thread {
 			this.online = false;
 		} catch (IOException e) {
 			e.printStackTrace();
+			this.theProcess.destroy();
 		}
 	}
 
@@ -142,12 +138,11 @@ public class Server extends Thread {
 					}
 				}
 			}
-		}, 20, 20 * 10);
+		}, 20 * 60, 20 * 10);
 	}
 
 	public void forceShutdown() {
 		this.theProcess.destroy();
-		callShutdownEvent();
 	}
 
 	public void setOnline(boolean online) {
@@ -163,7 +158,7 @@ public class Server extends Thread {
 	}
 
 	public int getKingdomID() {
-		return id;
+		return kingdomID;
 	}
 
 	public String getKingdomName() {

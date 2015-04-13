@@ -4,6 +4,7 @@ import com.minehut.api.managers.command.Command;
 import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
 import com.minehut.kingdomhost.KingdomHost;
+import com.minehut.kingdomhost.offline.OfflineServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,9 +23,17 @@ public class CreateCommand extends Command {
     public boolean call(Player player, ArrayList<String> args) {
 
         if (args.size() == 1) {
-            KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
+
+            OfflineServer offlineServer = KingdomHost.getPlugin().getServerManager().getServer(player);
+            if (offlineServer == null) {
+                KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
+            } else {
+                player.sendMessage("");
+                player.sendMessage("You already have a kingdom called " + C.aqua + offlineServer.getKingdomName());
+                player.sendMessage("");
+            }
         } else {
-            player.sendMessage("Please use the format " + C.red + "/create (name)");
+            player.sendMessage("Please use the format " + C.aqua + "/create (name)");
         }
 
         return false;
