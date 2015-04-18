@@ -30,7 +30,7 @@ public class CurrentServersManager implements Listener {
         this.host = serverManager.getHost();
         Bukkit.getServer().getPluginManager().registerEvents(this, this.host);
 
-        this.menu = Bukkit.getServer().createInventory(null, 27, C.underline + "Kingdoms");
+        this.menu = Bukkit.getServer().createInventory(null, 36, C.underline + "Kingdoms");
         this.updateMenu();
     }
 
@@ -81,7 +81,7 @@ public class CurrentServersManager implements Listener {
     }
 
     public static ItemStack getItem() {
-        return ItemStackFactory.createItem(Material.BOOK, C.yellow + C.bold + "KINGDOM SERVERS");
+        return ItemStackFactory.createItem(Material.BOOK, C.aqua + C.bold + "Kingdom Servers");
     }
 
 }

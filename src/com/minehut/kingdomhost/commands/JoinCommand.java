@@ -24,11 +24,11 @@ public class JoinCommand extends Command {
         if (args.size() == 1) {
             player.sendMessage("");
             player.sendMessage("Sending you to your requested server.");
-            player.sendMessage("This may take up to 30 seconds");
+            player.sendMessage("This may take " + C.aqua + "several moments" + C.white + " to complete.");
             player.sendMessage("");
             KingdomHost.getPlugin().getServerManager().connect(player, args.get(0));
         } else {
-            player.sendMessage("Please use the format " + C.red + "/join (name)");
+            player.sendMessage("Please use the format " + C.aqua + "/join (name)");
         }
 
         return false;

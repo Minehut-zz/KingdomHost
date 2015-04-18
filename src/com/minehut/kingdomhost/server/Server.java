@@ -1,13 +1,23 @@
 package com.minehut.kingdomhost.server;
 
+import com.minehut.commons.common.bungee.Bungee;
+import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.chat.F;
 import com.minehut.commons.common.uuid.NameFetcher;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.events.ServerShutdownEvent;
+import com.minehut.kingdomhost.offline.OfflineServer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Server extends Thread {
@@ -32,17 +42,24 @@ public class Server extends Thread {
 	private UUID ownerUUID;
 	private String ownerName;
 	private int port;
+	private int pid;
+	private UUID startupPlayer;
 
-	public Server(UUID owner, int kingdomID, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins) {
+	private ArrayList<UUID> startupPlayers;
+
+	public Server(UUID owner, int kingdomID, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins, UUID startupPlayer) {
 		this.kingdomID = kingdomID;
 		this.kingdomName = kingdomName;
 		this.port = port;
 		this.maxPlayers = maxPlayers;
 		this.borderSize = borderSize;
-		this.maxPlayers = maxPlugins;
+		this.maxPlayers = maxPlayers;
 		this.ownerUUID = owner;
-		this.online = true;
+		this.online = false;
 		this.runnableID = this.monitorOnlineStatus();
+
+		this.startupPlayers = new ArrayList<>();
+		this.startupPlayers.add(startupPlayer);
 	}
 
 	public void runCommand(String cmd) {
@@ -59,32 +76,23 @@ public class Server extends Thread {
 		if (kingdomID ==-1)
 			return;
 		try {
-
-			System.out.println("Starting server..");
-			this.online = true;
-
-			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/");
-
-			ProcessBuilder chmod = new ProcessBuilder("chmod", "775", "start.sh");
-			chmod.directory(executorDirectory);
-			Process chmodProcess = chmod.start();
-			chmod.start();
-
-			this.slave = new ProcessBuilder("./start.sh");
-			this.slave.directory(executorDirectory);
-			this.theProcess = this.slave.start();
-
-			this.writer = new PrintWriter(new OutputStreamWriter(this.theProcess.getOutputStream()));
-			is = this.theProcess.getInputStream();
-
-			System.out.println("Server started, getting output");
-
 			try {
 				this.ownerName = new NameFetcher(Arrays.asList(this.ownerUUID)).call().get(this.ownerUUID);
 			} catch (Exception e) {
-//				e.printStackTrace();
 				F.log("error getting player name");
 			}
+
+			this.setupClientConfig();
+
+			System.out.println("Starting server..");
+
+			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/");
+			this.theProcess = Runtime.getRuntime().exec("java -XX:MaxPermSize=128M -Xmx768M -Xms768M -jar spigot.jar", null, executorDirectory);
+			this.pid = getPid(this.theProcess);
+
+			this.writer = new PrintWriter(new OutputStreamWriter(this.theProcess.getOutputStream()));
+			is = this.theProcess.getInputStream();
+			System.out.println("Server started, getting output");
 
 			/* Host Commands */
 			runCommand("set_id " + Integer.toString(this.getKingdomID()));
@@ -94,8 +102,7 @@ public class Server extends Thread {
 			runCommand("whitelist add " + this.ownerName);
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-			String line = "";
+			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.contains("kingdom_")) {
 					String[] slaveCommandParser = line.split("_")[1].split(":");
@@ -103,22 +110,76 @@ public class Server extends Thread {
 					if (slaveCommandParser[0].equalsIgnoreCase("PlayersOnline")) {
 						this.currentPlayers = Integer.parseInt(slaveCommandParser[1]);
 						this.lastUpdated = System.currentTimeMillis();
+
+						if (!this.online) {
+							this.online = true;
+
+							if (this.startupPlayers.isEmpty()) {
+								this.forceShutdown();
+							} else {
+								for (UUID uuid : this.startupPlayers) {
+									Player player = Bukkit.getServer().getPlayer(uuid);
+									if (player != null) {
+										player.sendMessage("sending you to " + C.aqua + this.kingdomName);
+										Bungee.sendToServer(KingdomHost.getPlugin(), player, "kingdom" + Integer.toString(this.port - 60000));
+									}
+								}
+							}
+						}
+
 					}
 				}
-				System.out.println("<" + this.kingdomName + ">: " + line); //prints out server input
+
+				else if (line.contains("Preparing spawn area: ")) {
+					String[] slaveCommandParser = line.split("Preparing spawn area: ");
+
+					for(UUID uuid : this.startupPlayers) {
+						Player player = Bukkit.getPlayer(uuid);
+						if (player != null) {
+							player.sendMessage("Kingdom Startup: " + C.aqua + slaveCommandParser[1]);
+						}
+					}
+
+				}
+				System.out.println("[" + this.kingdomName + "]: " + line + "\n"); //prints out server input
 			}
 			System.out.println("server closed, thread finished");
-			this.theProcess.destroy();
-			callShutdownEvent();
+			this.forceShutdown();
 			this.online = false;
 		} catch (IOException e) {
 			e.printStackTrace();
-			this.theProcess.destroy();
+			this.forceShutdown();
 		}
 	}
 
 	public boolean isOnline() {
 		return online;
+	}
+
+	private void setupClientConfig() {
+		File mapConfigFile = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/plugins/KingdomClient/", "config.yml");
+
+		if (!mapConfigFile.exists()) {
+			try {
+				mapConfigFile.createNewFile();
+				Bukkit.getServer().getLogger().severe(ChatColor.RED + "Had to create new client config.yml!");
+				return;
+			} catch (IOException e) {
+				Bukkit.getServer().getLogger().severe(ChatColor.RED + "Could not create client config.yml!");
+			}
+		}
+
+		FileConfiguration config = YamlConfiguration.loadConfiguration(mapConfigFile);
+		config.set("owner-name", this.ownerName);
+		config.set("owner-uuid", this.ownerUUID.toString());
+		config.set("kingdom-id", this.kingdomID);
+		config.set("kingdom-name", this.kingdomName);
+
+		try {
+			config.save(mapConfigFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void callShutdownEvent() {
@@ -142,7 +203,19 @@ public class Server extends Thread {
 	}
 
 	public void forceShutdown() {
-		this.theProcess.destroy();
+		try {
+
+			F.log("------------------------------");
+			F.log("- FORCE SHUTTING DOWN KINGDOM -");
+			F.log("PID: " + Integer.toString(this.pid));
+			F.log("Kingdom: " + this.kingdomName);
+			F.log("------------------------------");
+
+			Runtime.getRuntime().exec("kill -SIGKILL " + Integer.toString(this.pid));
+			this.callShutdownEvent();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setOnline(boolean online) {
@@ -187,5 +260,27 @@ public class Server extends Thread {
 
 	public void setKingdomName(String kingdomName) {
 		this.kingdomName = kingdomName;
+	}
+
+	public int getPid(Process process) {
+		try {
+			Class<?> ProcessImpl = process.getClass();
+			Field field = ProcessImpl.getDeclaredField("pid");
+			field.setAccessible(true);
+			int pid = field.getInt(process);
+
+			F.log("HACKED PID: " + Integer.toString(pid));
+
+			return field.getInt(process);
+		} catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+			F.log("HACKED PID: -1 (something went wrong)");
+			return -1;
+		}
+	}
+
+	public void addStartupPlayer(Player player) {
+		if(!this.startupPlayers.contains(player.getUniqueId())) {
+			this.startupPlayers.add(player.getUniqueId());
+		}
 	}
 }

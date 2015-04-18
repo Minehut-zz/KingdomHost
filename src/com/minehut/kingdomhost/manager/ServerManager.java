@@ -61,9 +61,15 @@ public class ServerManager implements Listener {
 		/* Try to join online server */
 		for (Server server : this.servers) {
 			if (server.getKingdomName().equals(name)) {
-				player.sendMessage("Sending you to " + C.aqua + name);
-				Bungee.sendToServer(this.host, player, "kingdom" + Integer.toString(server.getPort() - 60000));
-				return true;
+				if(server.isOnline()) {
+					player.sendMessage("Sending you to " + C.aqua + name);
+					Bungee.sendToServer(this.host, player, "kingdom" + Integer.toString(server.getPort() - 60000));
+					return true;
+				} else {
+					player.sendMessage(C.aqua + server.getKingdomName() + C.white + " is currently starting up.");
+					server.addStartupPlayer(player);
+					return true;
+				}
 			}
 		}
 
@@ -73,7 +79,7 @@ public class ServerManager implements Listener {
 				int port = getOpenPort();
 				FileUtil.editServerProperties(os.getId(), port);
 
-				Server server = new Server(os.getOwnerUUID(), os.getId(), port, os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins());
+				Server server = new Server(os.getOwnerUUID(), os.getId(), port, os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins(), player.getUniqueId());
 				this.servers.add(server);
 				server.start();
 
@@ -132,7 +138,7 @@ public class ServerManager implements Listener {
 				/* Begin creation process */
 				player.sendMessage("");
 				player.sendMessage(C.white + "Creating your new Kingdom");
-				player.sendMessage("This may take up to 30 seconds");
+				player.sendMessage("This may take " + C.aqua + "several moments" + C.white + " to complete.");
 				player.sendMessage("");
 
 				int id = offlineServers.size() + 1;
@@ -149,7 +155,7 @@ public class ServerManager implements Listener {
 				offlineServers.add(offlineServer);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins());
+				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
 				servers.add(server);
 				server.start();
 
@@ -201,7 +207,7 @@ public class ServerManager implements Listener {
 				/* Begin creation process */
 				player.sendMessage("");
 				player.sendMessage("Creating your new Kingdom.");
-				player.sendMessage("This may take up to 30 seconds...");
+				player.sendMessage("This may take " + C.aqua + "several moments" + C.white + " to complete.");
 				player.sendMessage("");
 
 				/* Size is greater than index */
@@ -219,11 +225,8 @@ public class ServerManager implements Listener {
 				FileUtil.copySampleServer(id);
 				FileUtil.editServerProperties(id, port);
 
-				/* Add to offline list */
-				offlineServers.add(offlineServer);
-
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins());
+				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
 				servers.add(server);
 				server.start();
 
@@ -245,6 +248,11 @@ public class ServerManager implements Listener {
 
 		if (offlineServer == null) {
 			player.sendMessage(C.red + "You do not have a Kingdom.");
+			return;
+		}
+
+		/* Check if name is available */
+		if (!isNewName(player, name)) {
 			return;
 		}
 

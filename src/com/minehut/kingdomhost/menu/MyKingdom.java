@@ -57,6 +57,6 @@ public class MyKingdom implements Listener {
     }
 
     public static ItemStack getItem() {
-        return ItemStackFactory.createItem(Material.BOOK, C.yellow + C.bold + "JOIN YOUR KINGDOM");
+        return ItemStackFactory.createItem(Material.SIGN, C.yellow + C.bold + "Your Kingdom Info");
     }
 }
