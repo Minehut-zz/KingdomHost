@@ -1,5 +1,6 @@
 package com.minehut.kingdomhost.server;
 
+import com.minehut.api.util.player.GamePlayer;
 import com.minehut.commons.common.bungee.Bungee;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.chat.F;
@@ -56,10 +57,13 @@ public class Server extends Thread {
 		this.maxPlayers = maxPlayers;
 		this.ownerUUID = owner;
 		this.online = false;
-		this.runnableID = this.monitorOnlineStatus();
+
+		this.runnableID = 0;
 
 		this.startupPlayers = new ArrayList<>();
 		this.startupPlayers.add(startupPlayer);
+
+		runnableID = this.monitorOnlineStatus();
 	}
 
 	public void runCommand(String cmd) {
@@ -114,8 +118,8 @@ public class Server extends Thread {
 						if (!this.online) {
 							this.online = true;
 
-							if (this.startupPlayers.isEmpty()) {
-								this.forceShutdown();
+							if (this.isNoStartupPlayers()) {
+								this.callShutdownEvent();
 							} else {
 								for (UUID uuid : this.startupPlayers) {
 									Player player = Bukkit.getServer().getPlayer(uuid);
@@ -141,15 +145,45 @@ public class Server extends Thread {
 					}
 
 				}
-				System.out.println("[" + this.kingdomName + "]: " + line + "\n"); //prints out server input
+
+				else if (line.toLowerCase().contains("failed to bind")) {
+					for(UUID uuid : this.startupPlayers) {
+						Player player = Bukkit.getPlayer(uuid);
+						if (player != null) {
+							player.sendMessage("The error " + C.red + "Port Bind" + C.white + " has occured. Please notify a staff member.");
+						}
+					}
+
+					F.log("------------------------------");
+					F.log("- FAILED TO PIND TO PORT -");
+					F.log("Port: " + Integer.toString(this.port));
+					F.log("Kingdom: " + this.kingdomName);
+					F.log("PID: " + Integer.toString(this.pid));
+					F.log("------------------------------");
+				}
+//				System.out.println("[" + this.kingdomName + "]: " + line + "\n"); //prints out server input
 			}
 			System.out.println("server closed, thread finished");
-			this.forceShutdown();
+			this.callShutdownEvent();
 			this.online = false;
 		} catch (IOException e) {
 			e.printStackTrace();
-			this.forceShutdown();
+			this.callShutdownEvent();
 		}
+	}
+
+	public boolean isNoStartupPlayers() {
+		int i = 0;
+		for (UUID uuid : this.startupPlayers) {
+			if (Bukkit.getServer().getPlayer(uuid) == null) {
+				i++;
+			}
+		}
+
+		if (i >= this.startupPlayers.size()) {
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isOnline() {
@@ -163,7 +197,6 @@ public class Server extends Thread {
 			try {
 				mapConfigFile.createNewFile();
 				Bukkit.getServer().getLogger().severe(ChatColor.RED + "Had to create new client config.yml!");
-				return;
 			} catch (IOException e) {
 				Bukkit.getServer().getLogger().severe(ChatColor.RED + "Could not create client config.yml!");
 			}
@@ -192,14 +225,12 @@ public class Server extends Thread {
 			public void run() {
 				long difference = (System.currentTimeMillis() - lastUpdated) / 1000;
 				if (difference >= 10) {
-					if (theProcess.isAlive()) {
-						theProcess.destroy();
-						callShutdownEvent();
-						Bukkit.getServer().getScheduler().cancelTask(runnableID);
-					}
+					callShutdownEvent();
+					Bukkit.getServer().getScheduler().cancelTask(runnableID);
 				}
+
 			}
-		}, 20 * 60, 20 * 10);
+		}, 180 * 60, 20 * 10);
 	}
 
 	public void forceShutdown() {
@@ -212,7 +243,6 @@ public class Server extends Thread {
 			F.log("------------------------------");
 
 			Runtime.getRuntime().exec("kill -SIGKILL " + Integer.toString(this.pid));
-			this.callShutdownEvent();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -282,5 +312,9 @@ public class Server extends Thread {
 		if(!this.startupPlayers.contains(player.getUniqueId())) {
 			this.startupPlayers.add(player.getUniqueId());
 		}
+	}
+
+	public int getPid() {
+		return pid;
 	}
 }

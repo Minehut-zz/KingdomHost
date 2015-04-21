@@ -30,7 +30,7 @@ public class ResetCommand extends Command {
     @Override
     public boolean call(Player player, ArrayList<String> args) {
 
-
+        player.openInventory(confirm);
 
         return false;
     }
@@ -43,6 +43,7 @@ public class ResetCommand extends Command {
             event.setCancelled(true);
 
             /* Empty Slot Click */
+            if(event.getCurrentItem() == null) return;
             if(event.getCurrentItem().getType() == null) return;
 
             /* Plugins Button */

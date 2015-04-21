@@ -59,7 +59,15 @@ public class CurrentServersManager implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getName().equalsIgnoreCase(this.menu.getName())) {
             event.setCancelled(true);
+            if (event.getCurrentItem() == null) {
+                return;
+            }
+
             if (event.getCurrentItem().getType() == null) {
+                return;
+            }
+
+            if (event.getCurrentItem().getItemMeta() == null || event.getCurrentItem().getItemMeta().getDisplayName() == null) {
                 return;
             }
 

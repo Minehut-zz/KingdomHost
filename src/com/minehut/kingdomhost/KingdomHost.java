@@ -4,6 +4,7 @@ import com.minehut.kingdomhost.commands.CreateCommand;
 import com.minehut.kingdomhost.commands.JoinCommand;
 import com.minehut.kingdomhost.commands.RenameCommand;
 import com.minehut.kingdomhost.commands.ResetCommand;
+import com.minehut.kingdomhost.commands.admin.PortsCommand;
 import com.minehut.kingdomhost.manager.ServerManager;
 import com.minehut.kingdomhost.menu.CurrentServersManager;
 import com.minehut.kingdomhost.menu.MyKingdom;
@@ -34,6 +35,8 @@ public class KingdomHost extends JavaPlugin {
         new JoinCommand(this);
         new RenameCommand(this);
         new ResetCommand(this);
+        new PortsCommand(this);
+
     }
 
     @EventHandler

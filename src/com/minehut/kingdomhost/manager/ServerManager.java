@@ -27,10 +27,12 @@ public class ServerManager implements Listener {
 	KingdomHost host;
 	ArrayList<Server> servers;
 	ArrayList<OfflineServer> offlineServers;
+	ArrayList<Integer> progressPorts;
 
 	public ServerManager(KingdomHost host) {
 		this.servers = new ArrayList<>();
 		this.offlineServers = new ArrayList<>();
+		this.progressPorts = new ArrayList<>();
 
 		this.host = host;
 		this.loadConfig();
@@ -49,7 +51,8 @@ public class ServerManager implements Listener {
 	int getOpenPort() {
 
 		for (int port = 60001; port < 60500; port++) {
-			if (!usedPort(port)) {
+			if (!usedPort(port) && !this.progressPorts.contains(port)) {
+				this.progressPorts.add(port);
 				return port;
 			}
 		}
@@ -83,8 +86,8 @@ public class ServerManager implements Listener {
 				this.servers.add(server);
 				server.start();
 
-				/* Attempt to connect once more. Delay for startup time */
-				connect(player, name, 20);
+				removeProgressPort(port);
+
 				return true;
 			}
 		}
@@ -159,6 +162,8 @@ public class ServerManager implements Listener {
 				servers.add(server);
 				server.start();
 
+				removeProgressPort(port);
+
 				/* Save to config */
 				saveKingdomToConfig(offlineServer);
 
@@ -169,20 +174,20 @@ public class ServerManager implements Listener {
 	}
 
 	public void resetServer(final Player player) {
-		Bukkit.getScheduler().scheduleSyncDelayedTask(this.host, new Runnable() {
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.host, new Runnable() {
 			@Override
 			public void run() {
 
 				/* Check if maxed out */
 				if (maxRuntimeServers()) {
 					player.sendMessage(C.red + "Our servers are currently full. Please wait to create a new Server");
+					return;
 				}
 
 				/* Shutdown server */
 				for (Server server : servers) {
 					if (server.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
 						server.forceShutdown();
-						servers.remove(server);
 						break;
 					}
 				}
@@ -230,11 +235,27 @@ public class ServerManager implements Listener {
 				servers.add(server);
 				server.start();
 
+				removeProgressPort(port);
+
 				/* Connect after server has started (delay) */
 				connect(player, offlineServer.getKingdomName(), 20);
 
 			}
 		}, 1);
+	}
+
+	public void removeProgressPort(int port) {
+		for (int i = 0; i < this.progressPorts.size(); i++) {
+			int markedIndex = -1;
+			if (this.progressPorts.get(i) == port) {
+				markedIndex = i;
+			}
+
+			if (markedIndex != -1) {
+				this.progressPorts.remove(markedIndex);
+				return;
+			}
+		}
 	}
 
 	public void changeName(Player player, String name) {
@@ -277,6 +298,7 @@ public class ServerManager implements Listener {
 
 	@EventHandler
 	public void onKingdomShutdown(ServerShutdownEvent event) {
+		event.getServer().forceShutdown();
 		this.servers.remove(event.getServer());
 	}
 
