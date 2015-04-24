@@ -22,6 +22,8 @@ public class CreateCommand extends Command {
     @Override
     public boolean call(Player player, ArrayList<String> args) {
 
+        //Todo: event servers (allow multiple server ownership)
+
         if (args.size() == 1) {
 
             OfflineServer offlineServer = KingdomHost.getPlugin().getServerManager().getServer(player);

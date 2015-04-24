@@ -43,12 +43,12 @@ public class MyKingdom implements Listener {
                         /* Doesn't have a kingdom */
                         player.sendMessage("");
                         player.sendMessage("");
-                        player.sendMessage(C.white + "You have not created a Kingdom yet.");
+                        player.sendMessage(C.white + "You have not created a server yet.");
                         player.sendMessage(C.white + "Create one with " + C.aqua + "/create (name)");
                     } else {
                         player.sendMessage("");
-                        player.sendMessage("Your kingdom is named " + C.aqua + server.getKingdomName());
-                        player.sendMessage("Join your kingdom with " + C.aqua + "/join " + server.getKingdomName());
+                        player.sendMessage("Your server is named " + C.aqua + server.getKingdomName());
+                        player.sendMessage("Join your server with " + C.aqua + "/join " + server.getKingdomName());
                         player.sendMessage("");
                     }
                 }
@@ -57,6 +57,6 @@ public class MyKingdom implements Listener {
     }
 
     public static ItemStack getItem() {
-        return ItemStackFactory.createItem(Material.SIGN, C.yellow + C.bold + "Your Kingdom Info");
+        return ItemStackFactory.createItem(Material.SIGN, C.yellow + C.bold + "My Server Info");
     }
 }
