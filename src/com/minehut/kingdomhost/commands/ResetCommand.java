@@ -1,5 +1,6 @@
 package com.minehut.kingdomhost.commands;
 
+import com.minehut.api.API;
 import com.minehut.api.managers.command.Command;
 import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
@@ -30,7 +31,18 @@ public class ResetCommand extends Command {
     @Override
     public boolean call(Player player, ArrayList<String> args) {
 
-        player.openInventory(confirm);
+        if (API.getAPI().getGamePlayer(player).getRank().has(null, Rank.Ref, false)) {
+
+            player.sendMessage("");
+            player.sendMessage("As a " + C.gold + "Ref" + C.white + ", you must specify the server to reset.");
+            player.sendMessage("Example: " + C.aqua + "/reset (name)");
+            player.sendMessage("");
+
+
+
+        } else {
+            player.openInventory(confirm);
+        }
 
         return false;
     }

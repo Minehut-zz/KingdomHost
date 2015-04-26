@@ -203,8 +203,8 @@ public class ServerManager implements Listener {
 				/* Check to see if server existed */
 				if (offlineServer == null) {
 					player.sendMessage("");
-					player.sendMessage(C.red + "You do not have an existing server.");
-					player.sendMessage(C.red + "Create one with " + C.aqua + "/create (name)");
+					player.sendMessage("You do not have an existing server.");
+					player.sendMessage("Create one with " + C.aqua + "/create (name)");
 					player.sendMessage("");
 					return;
 				}
@@ -447,12 +447,88 @@ public class ServerManager implements Listener {
 		return null;
 	}
 
-	public OfflineServer getServer(Player player) {
+	public ArrayList<OfflineServer> getServer(Player player) {
+		ArrayList<OfflineServer> ownedServers = new ArrayList<>();
+
 		for (OfflineServer offlineServer : this.offlineServers) {
 			if (offlineServer.getOwnerUUID().toString().equalsIgnoreCase(player.getUniqueId().toString())) {
-				return offlineServer;
+				ownedServers.add(offlineServer);
 			}
 		}
-		return null;
+		return ownedServers;
+	}
+
+
+
+	/* Multi server reset */
+	public void resetServer(final Player player, String name) {
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.host, new Runnable() {
+			@Override
+			public void run() {
+
+				/* Check if maxed out */
+				if (maxRuntimeServers()) {
+					player.sendMessage(C.red + "Our servers are currently full. Please wait to create a new Server");
+					return;
+				}
+
+				/* Shutdown server */
+				for (Server server : servers) {
+					if (server.getKingdomName().equalsIgnoreCase(name)) {
+						server.forceShutdown();
+						break;
+					}
+				}
+
+				/* Use data from offline-server */
+				OfflineServer offlineServer = null;
+				for (OfflineServer os : offlineServers) {
+					if (os.getKingdomName().equalsIgnoreCase(name)) {
+						offlineServer = os;
+					}
+				}
+
+				/* Check to see if server existed */
+				if (offlineServer == null) {
+					player.sendMessage("");
+					player.sendMessage("You do not have an existing server.");
+					player.sendMessage("Create one with " + C.aqua + "/create (name)");
+					player.sendMessage("");
+					return;
+				}
+
+				/* Begin creation process */
+				player.sendMessage("");
+				player.sendMessage("Creating your new Kingdom.");
+				player.sendMessage("This may take " + C.aqua + "several moments" + C.white + " to complete.");
+				player.sendMessage("");
+
+				/* Size is greater than index */
+				int id = offlineServer.getId();
+				int port = getOpenPort();
+
+				/* Delete */
+				try {
+					FileUtils.deleteDirectory(new File("/home/kingdoms/kingdom" + offlineServer.getId()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				/* Copy files */
+				FileUtil.copySampleServer(id);
+				FileUtil.editServerProperties(id, port);
+
+				/* Start up server */
+				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
+				servers.add(server);
+				server.start();
+
+				removeProgressPort(port);
+
+				/* Connect after server has started (delay) */
+				connect(player, offlineServer.getKingdomName(), 20);
+
+			}
+		}, 1);
 	}
 }

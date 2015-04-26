@@ -1,5 +1,7 @@
 package com.minehut.kingdomhost.menu;
 
+import com.minehut.api.API;
+import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.items.ItemStackFactory;
 import com.minehut.kingdomhost.KingdomHost;
@@ -15,6 +17,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
 
 /**
  * Created by luke on 4/11/15.
@@ -38,18 +42,28 @@ public class MyKingdom implements Listener {
                 if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(getItem().getItemMeta().getDisplayName())) {
                     event.setCancelled(true);
 
-                    OfflineServer server = serverManager.getServer(player);
-                    if (serverManager.getServer(player) == null) {
+                    ArrayList<OfflineServer> ownedServers = serverManager.getServer(player);
+                    if (ownedServers.isEmpty()) {
                         /* Doesn't have a kingdom */
-                        player.sendMessage("");
                         player.sendMessage("");
                         player.sendMessage(C.white + "You have not created a server yet.");
                         player.sendMessage(C.white + "Create one with " + C.aqua + "/create (name)");
                     } else {
-                        player.sendMessage("");
-                        player.sendMessage("Your server is named " + C.aqua + server.getKingdomName());
-                        player.sendMessage("Join your server with " + C.aqua + "/join " + server.getKingdomName());
-                        player.sendMessage("");
+                        if(API.getAPI().getGamePlayer(player).getRank().has(null, Rank.Ref, false)) {
+                            player.sendMessage("");
+                            player.sendMessage("Your owned servers: ");
+
+                            for (int i = 0; i < ownedServers.size(); i++) {
+                                player.sendMessage(Integer.toString(i + 1) + ") " + C.aqua + ownedServers.get(i).getKingdomName());
+                            }
+                            player.sendMessage("");
+
+                        } else {
+                            player.sendMessage("");
+                            player.sendMessage("Your server is named " + C.aqua + ownedServers.get(0).getKingdomName());
+                            player.sendMessage("Join your server with " + C.aqua + "/join " + ownedServers.get(0).getKingdomName());
+                            player.sendMessage("");
+                        }
                     }
                 }
             }

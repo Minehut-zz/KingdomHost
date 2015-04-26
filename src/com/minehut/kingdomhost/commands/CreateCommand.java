@@ -1,5 +1,6 @@
 package com.minehut.kingdomhost.commands;
 
+import com.minehut.api.API;
 import com.minehut.api.managers.command.Command;
 import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
@@ -26,13 +27,17 @@ public class CreateCommand extends Command {
 
         if (args.size() == 1) {
 
-            OfflineServer offlineServer = KingdomHost.getPlugin().getServerManager().getServer(player);
-            if (offlineServer == null) {
+            ArrayList<OfflineServer> ownedServers = KingdomHost.getPlugin().getServerManager().getServer(player);
+            if (ownedServers.isEmpty()) {
                 KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
             } else {
-                player.sendMessage("");
-                player.sendMessage("You already have a kingdom called " + C.aqua + offlineServer.getKingdomName());
-                player.sendMessage("");
+                if (API.getAPI().getGamePlayer(player).getRank().has(null, Rank.Ref, false)) {
+                    KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
+                } else {
+                    player.sendMessage("");
+                    player.sendMessage("You already have a server called " + C.aqua + ownedServers.get(0).getKingdomName());
+                    player.sendMessage("");
+                }
             }
         } else {
             player.sendMessage("Please use the format " + C.aqua + "/create (name)");
