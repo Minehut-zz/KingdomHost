@@ -1,5 +1,7 @@
 package com.minehut.kingdomhost.manager;
 
+import com.minehut.api.API;
+import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.bungee.Bungee;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.chat.F;
@@ -28,6 +30,8 @@ public class ServerManager implements Listener {
 	ArrayList<Server> servers;
 	ArrayList<OfflineServer> offlineServers;
 	ArrayList<Integer> progressPorts;
+
+	private static int defaultRam = 1024;
 
 	public ServerManager(KingdomHost host) {
 		this.servers = new ArrayList<>();
@@ -76,13 +80,21 @@ public class ServerManager implements Listener {
 			}
 		}
 
+		/* Check if maxed out */
+		if (maxRuntimeServers()) {
+			player.sendMessage("");
+			player.sendMessage(C.white + "Our servers are currently full. Please wait startup a server");
+			player.sendMessage("");
+			return true;
+		}
+
 		/* Server isn't online, try to start it */
 		for (OfflineServer os : this.offlineServers) {
 			if (os.getKingdomName().equals(name)) {
 				int port = getOpenPort();
 				FileUtil.editServerProperties(os.getId(), port);
 
-				Server server = new Server(os.getOwnerUUID(), os.getId(), port, os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins(), player.getUniqueId());
+				Server server = new Server(os.getOwnerUUID(), os.getId(), port, os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins(), player.getUniqueId(), os.getRam());
 				this.servers.add(server);
 				server.start();
 
@@ -148,7 +160,7 @@ public class ServerManager implements Listener {
 				int port = getOpenPort();
 
 				/* todo: rank-based perks */
-				OfflineServer offlineServer = new OfflineServer(id, name, player.getUniqueId(), 10, 500, 5);
+				OfflineServer offlineServer = new OfflineServer(id, name, player.getUniqueId(), 10, 500, 5, getRam(API.getAPI().getGamePlayer(player).getRank()));
 
 				/* Copy files */
 				FileUtil.copySampleServer(id);
@@ -158,7 +170,7 @@ public class ServerManager implements Listener {
 				offlineServers.add(offlineServer);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
+				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId(), offlineServer.getRam());
 				servers.add(server);
 				server.start();
 
@@ -231,7 +243,7 @@ public class ServerManager implements Listener {
 				FileUtil.editServerProperties(id, port);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
+				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId(), offlineServer.getRam());
 				servers.add(server);
 				server.start();
 
@@ -292,7 +304,7 @@ public class ServerManager implements Listener {
 
 		/* Notify Player */
 		player.sendMessage("");
-		player.sendMessage("You have changed your kingdom name to " + C.aqua + name);
+		player.sendMessage("You have changed your server name to " + C.aqua + name);
 		player.sendMessage("");
 	}
 
@@ -305,7 +317,7 @@ public class ServerManager implements Listener {
 	boolean isNewName(Player player, String name) {
 
 		if (!(name.length() <= 11)) {
-			player.sendMessage(C.red + "A kingdom name must be less than 12 characters in length.");
+			player.sendMessage(C.red + "A server name must be less than 12 characters in length.");
 			return false;
 		}
 
@@ -348,7 +360,15 @@ public class ServerManager implements Listener {
 				int borderSize = config.getInt("kingdoms." + id + ".borderSize");
 				int maxPlugins = config.getInt("kingdoms." + id + ".maxPlugins");
 
-				OfflineServer offlineServer = new OfflineServer(Integer.parseInt(id), name, UUID.fromString(ownerUUID), maxPlayers, borderSize, maxPlugins);
+				/* New stuff */
+				int ram = config.getInt("kingdoms." + id + ".ram");
+				if(ram == 0) {
+					/* Did not contain */
+					config.getConfigurationSection("kingdoms." + id).set("ram", defaultRam);
+					ram = defaultRam;
+				}
+
+				OfflineServer offlineServer = new OfflineServer(Integer.parseInt(id), name, UUID.fromString(ownerUUID), maxPlayers, borderSize, maxPlugins, ram);
 				offlineServers.add(offlineServer);
 
 				System.out.println("Successfully loaded offline-server: " + name);
@@ -380,6 +400,7 @@ public class ServerManager implements Listener {
 		config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
 		config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
 		config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
+		config.getConfigurationSection("kingdoms." + id).set("ram", server.getRam());
 
 		try {
 			config.save(mapConfigFile);
@@ -411,6 +432,7 @@ public class ServerManager implements Listener {
 		config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
 		config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
 		config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
+		config.getConfigurationSection("kingdoms." + id).set("ram", server.getRam());
 
 		try {
 			config.save(mapConfigFile);
@@ -420,7 +442,7 @@ public class ServerManager implements Listener {
 	}
 
 	public boolean maxRuntimeServers() {
-		if (this.servers.size() >= 30) {
+		if (this.servers.size() >= 50) {
 			return true;
 		}
 		return false;
@@ -519,7 +541,7 @@ public class ServerManager implements Listener {
 				FileUtil.editServerProperties(id, port);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
+				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId(), offlineServer.getRam());
 				servers.add(server);
 				server.start();
 
@@ -530,5 +552,57 @@ public class ServerManager implements Listener {
 
 			}
 		}, 1);
+	}
+
+	public void changeName(Player player, String serverName, String name) {
+		OfflineServer offlineServer = null;
+		for (OfflineServer os : this.offlineServers) {
+			if (os.getKingdomName().equals(serverName)) {
+				offlineServer = os;
+				break;
+			}
+		}
+
+		if (offlineServer == null) {
+			player.sendMessage(C.red + "You do not have a server named " + C.aqua + serverName);
+			return;
+		}
+
+		/* Check if name is available */
+		if (!isNewName(player, name)) {
+			return;
+		}
+
+		offlineServer.setKingdomName(name);
+
+		/* Modify online server */
+		for (Server server : this.servers) {
+			if (server.getKingdomID() == offlineServer.getId()) {
+				server.setKingdomName(name);
+				break;
+			}
+		}
+
+		/* Update config */
+		updateConfig(offlineServer);
+
+		/* Notify Player */
+		player.sendMessage("");
+		player.sendMessage("You have changed your server name to " + C.aqua + name);
+		player.sendMessage("");
+	}
+
+	private static int getRam(Rank rank) {
+		if (rank.has(null, Rank.Mega, false)) {
+			return 1536; // 0.5 gb
+		} else if (rank.has(null, Rank.Super, false)) {
+			return 2048; // 2 gb
+		} else if (rank.has(null, Rank.Legend, false)) {
+			return 3072; // 3 gb
+		} else if (rank.has(null, Rank.Champ, false)) {
+			return 5120; // 5 gb
+		} else {
+			return 1024; // 1 gb
+		}
 	}
 }

@@ -45,18 +45,20 @@ public class Server extends Thread {
 	private int port;
 	private int pid;
 	private UUID startupPlayer;
+	private int ram;
 
 	private ArrayList<UUID> startupPlayers;
 
-	public Server(UUID owner, int kingdomID, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins, UUID startupPlayer) {
+	public Server(UUID owner, int kingdomID, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins, UUID startupPlayer, int ram) {
 		this.kingdomID = kingdomID;
 		this.kingdomName = kingdomName;
 		this.port = port;
 		this.maxPlayers = maxPlayers;
 		this.borderSize = borderSize;
-		this.maxPlayers = maxPlayers;
+		this.maxPlugins = maxPlugins;
 		this.ownerUUID = owner;
 		this.online = false;
+		this.ram = ram;
 
 		this.runnableID = 0;
 
@@ -91,7 +93,8 @@ public class Server extends Thread {
 			System.out.println("Starting server..");
 
 			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/");
-			this.theProcess = Runtime.getRuntime().exec("java -XX:MaxPermSize=128M -Xmx768M -Xms768M -jar spigot.jar", null, executorDirectory);
+			F.log("Starting server with ram: " + Integer.toString(this.ram));
+			this.theProcess = Runtime.getRuntime().exec("java -XX:MaxPermSize=128M -Xmx" + Integer.toString(this.ram) + "M -Xms" + Integer.toString(this.ram) + "M -jar spigot.jar", null, executorDirectory);
 			this.pid = getPid(this.theProcess);
 
 			this.writer = new PrintWriter(new OutputStreamWriter(this.theProcess.getOutputStream()));
@@ -150,7 +153,7 @@ public class Server extends Thread {
 					for(UUID uuid : this.startupPlayers) {
 						Player player = Bukkit.getPlayer(uuid);
 						if (player != null) {
-							player.sendMessage("The error " + C.red + "Port Bind" + C.white + " has occured. Please notify a staff member.");
+							player.sendMessage("The error " + C.red + "Port Bind" + C.white + " has occured. Please try again.");
 						}
 					}
 
@@ -316,5 +319,9 @@ public class Server extends Thread {
 
 	public int getPid() {
 		return pid;
+	}
+
+	public int getRam() {
+		return ram;
 	}
 }

@@ -31,8 +31,23 @@ public class CreateCommand extends Command {
             if (ownedServers.isEmpty()) {
                 KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
             } else {
-                if (API.getAPI().getGamePlayer(player).getRank().has(null, Rank.Ref, false)) {
-                    KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
+                Rank rank = API.getAPI().getGamePlayer(player).getRank();
+                if (rank.has(null, Rank.Ref, false)) {
+                    if(ownedServers.size() > 3) {
+                        player.sendMessage("");
+                        player.sendMessage("You have reached your maximum of " + C.aqua + "three servers");
+                        player.sendMessage("");
+                    } else {
+                        KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
+                    }
+                } else if (rank.has(null, Rank.Champ, false)) {
+                    if(ownedServers.size() > 2) {
+                        player.sendMessage("");
+                        player.sendMessage("You have reached your maximum of " + C.aqua + "two servers");
+                        player.sendMessage("");
+                    } else {
+                        KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
+                    }
                 } else {
                     player.sendMessage("");
                     player.sendMessage("You already have a server called " + C.aqua + ownedServers.get(0).getKingdomName());

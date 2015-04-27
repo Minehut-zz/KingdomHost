@@ -6,6 +6,7 @@ import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.items.ItemStackFactory;
 import com.minehut.kingdomhost.KingdomHost;
+import com.minehut.kingdomhost.offline.OfflineServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,20 +32,25 @@ public class ResetCommand extends Command {
     @Override
     public boolean call(Player player, ArrayList<String> args) {
 
-        if (API.getAPI().getGamePlayer(player).getRank().has(null, Rank.Ref, false)) {
+        ArrayList<OfflineServer> ownedServers = KingdomHost.getPlugin().getServerManager().getServer(player);
 
-            player.sendMessage("");
-            player.sendMessage("As a " + C.gold + "Ref" + C.white + ", you must specify the server to reset.");
-            player.sendMessage("Example: " + C.aqua + "/reset (name)");
-            player.sendMessage("");
+            /* Owns multiple servers */
+        if(ownedServers.size() > 1) {
+            if(args.size() != 1) {
+                player.sendMessage("");
+                player.sendMessage("As a " + C.gold + "Ref" + C.white + ", you must specify the server to reset.");
+                player.sendMessage("Example: " + C.aqua + "/reset (name)");
+                player.sendMessage("");
+            } else {
+                KingdomHost.getPlugin().getServerManager().resetServer(player, args.get(0));
+            }
 
-
-
+            /* Only owns one server */
         } else {
             player.openInventory(confirm);
         }
 
-        return false;
+        return true;
     }
 
     @EventHandler
