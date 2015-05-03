@@ -1,6 +1,8 @@
 package com.minehut.kingdomhost.server;
 
+import com.minehut.api.API;
 import com.minehut.api.util.player.GamePlayer;
+import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.bungee.Bungee;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.chat.F;
@@ -45,11 +47,10 @@ public class Server extends Thread {
 	private int port;
 	private int pid;
 	private UUID startupPlayer;
-	private int ram;
 
 	private ArrayList<UUID> startupPlayers;
 
-	public Server(UUID owner, int kingdomID, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins, UUID startupPlayer, int ram) {
+	public Server(UUID owner, int kingdomID, int port, String kingdomName, int maxPlayers, int borderSize, int maxPlugins, UUID startupPlayer) {
 		this.kingdomID = kingdomID;
 		this.kingdomName = kingdomName;
 		this.port = port;
@@ -58,7 +59,6 @@ public class Server extends Thread {
 		this.maxPlugins = maxPlugins;
 		this.ownerUUID = owner;
 		this.online = false;
-		this.ram = ram;
 
 		this.runnableID = 0;
 
@@ -93,8 +93,10 @@ public class Server extends Thread {
 			System.out.println("Starting server..");
 
 			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/");
-			F.log("Starting server with ram: " + Integer.toString(this.ram));
-			this.theProcess = Runtime.getRuntime().exec("java -XX:MaxPermSize=128M -Xmx" + Integer.toString(this.ram) + "M -Xms" + Integer.toString(this.ram) + "M -jar spigot.jar", null, executorDirectory);
+
+			int ram = getRam(API.getAPI().getRank(ownerUUID));
+			F.log("Starting server with ram: " + Integer.toString(ram));
+			this.theProcess = Runtime.getRuntime().exec("java -XX:MaxPermSize=128M -Xmx" + Integer.toString(ram) + "M -Xms" + Integer.toString(ram) + "M -jar spigot.jar", null, executorDirectory);
 			this.pid = getPid(this.theProcess);
 
 			this.writer = new PrintWriter(new OutputStreamWriter(this.theProcess.getOutputStream()));
@@ -317,11 +319,22 @@ public class Server extends Thread {
 		}
 	}
 
+	private int getRam(Rank rank) {
+		if (rank.has(null, Rank.Champ, false)) {
+			return 5120; // 5 gb
+		} else if (rank.has(null, Rank.Legend, false)) {
+			return 3072; // 3 gb
+		} else if (rank.has(null, Rank.Super, false)) {
+			return 2048; // 2 gb
+		} else if (rank.has(null, Rank.Mega, false)) {
+			return 1536; // 1.5 gb
+		} else {
+			return 1024; // 1 gb
+		}
+	}
+
 	public int getPid() {
 		return pid;
 	}
 
-	public int getRam() {
-		return ram;
-	}
 }

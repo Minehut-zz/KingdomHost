@@ -94,7 +94,7 @@ public class ServerManager implements Listener {
 				int port = getOpenPort();
 				FileUtil.editServerProperties(os.getId(), port);
 
-				Server server = new Server(os.getOwnerUUID(), os.getId(), port, os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins(), player.getUniqueId(), os.getRam());
+				Server server = new Server(os.getOwnerUUID(), os.getId(), port, os.getKingdomName(), os.getMaxPlayers(), os.getBorderSize(), os.getMaxPlugins(), player.getUniqueId());
 				this.servers.add(server);
 				server.start();
 
@@ -160,7 +160,7 @@ public class ServerManager implements Listener {
 				int port = getOpenPort();
 
 				/* todo: rank-based perks */
-				OfflineServer offlineServer = new OfflineServer(id, name, player.getUniqueId(), 10, 500, 5, getRam(API.getAPI().getGamePlayer(player).getRank()));
+				OfflineServer offlineServer = new OfflineServer(id, name, player.getUniqueId(), 10, 500, 5);
 
 				/* Copy files */
 				FileUtil.copySampleServer(id);
@@ -170,7 +170,7 @@ public class ServerManager implements Listener {
 				offlineServers.add(offlineServer);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId(), offlineServer.getRam());
+				Server server = new Server(player.getUniqueId(), id, port, name, offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
 				servers.add(server);
 				server.start();
 
@@ -243,7 +243,7 @@ public class ServerManager implements Listener {
 				FileUtil.editServerProperties(id, port);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId(), offlineServer.getRam());
+				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
 				servers.add(server);
 				server.start();
 
@@ -368,7 +368,7 @@ public class ServerManager implements Listener {
 					ram = defaultRam;
 				}
 
-				OfflineServer offlineServer = new OfflineServer(Integer.parseInt(id), name, UUID.fromString(ownerUUID), maxPlayers, borderSize, maxPlugins, ram);
+				OfflineServer offlineServer = new OfflineServer(Integer.parseInt(id), name, UUID.fromString(ownerUUID), maxPlayers, borderSize, maxPlugins);
 				offlineServers.add(offlineServer);
 
 				System.out.println("Successfully loaded offline-server: " + name);
@@ -400,7 +400,6 @@ public class ServerManager implements Listener {
 		config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
 		config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
 		config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
-		config.getConfigurationSection("kingdoms." + id).set("ram", server.getRam());
 
 		try {
 			config.save(mapConfigFile);
@@ -432,7 +431,6 @@ public class ServerManager implements Listener {
 		config.getConfigurationSection("kingdoms." + id).set("maxPlayers", server.getMaxPlayers());
 		config.getConfigurationSection("kingdoms." + id).set("borderSize", server.getBorderSize());
 		config.getConfigurationSection("kingdoms." + id).set("maxPlugins", server.getMaxPlugins());
-		config.getConfigurationSection("kingdoms." + id).set("ram", server.getRam());
 
 		try {
 			config.save(mapConfigFile);
@@ -541,7 +539,7 @@ public class ServerManager implements Listener {
 				FileUtil.editServerProperties(id, port);
 
 				/* Start up server */
-				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId(), offlineServer.getRam());
+				Server server = new Server(player.getUniqueId(), id, port, offlineServer.getKingdomName(), offlineServer.getMaxPlayers(), offlineServer.getBorderSize(), offlineServer.getMaxPlugins(), player.getUniqueId());
 				servers.add(server);
 				server.start();
 
@@ -590,19 +588,5 @@ public class ServerManager implements Listener {
 		player.sendMessage("");
 		player.sendMessage("You have changed your server name to " + C.aqua + name);
 		player.sendMessage("");
-	}
-
-	private static int getRam(Rank rank) {
-		if (rank.has(null, Rank.Mega, false)) {
-			return 1536; // 0.5 gb
-		} else if (rank.has(null, Rank.Super, false)) {
-			return 2048; // 2 gb
-		} else if (rank.has(null, Rank.Legend, false)) {
-			return 3072; // 3 gb
-		} else if (rank.has(null, Rank.Champ, false)) {
-			return 5120; // 5 gb
-		} else {
-			return 1024; // 1 gb
-		}
 	}
 }

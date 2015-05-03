@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class PortsCommand extends Command {
 
     public PortsCommand(JavaPlugin plugin) {
-        super(plugin, "ports", Rank.admin);
+        super(plugin, "ports", Rank.Admin);
     }
 
     @Override

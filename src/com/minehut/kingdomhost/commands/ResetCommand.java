@@ -38,7 +38,7 @@ public class ResetCommand extends Command {
         if(ownedServers.size() > 1) {
             if(args.size() != 1) {
                 player.sendMessage("");
-                player.sendMessage("As a " + C.gold + "Ref" + C.white + ", you must specify the server to reset.");
+                player.sendMessage("You must specify which of your servers to reset.");
                 player.sendMessage("Example: " + C.aqua + "/reset (name)");
                 player.sendMessage("");
             } else {

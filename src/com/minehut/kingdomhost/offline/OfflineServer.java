@@ -12,16 +12,14 @@ public class OfflineServer {
     private int maxPlayers;
     private int borderSize;
     private int maxPlugins;
-    private int ram;
 
-    public OfflineServer(int id, String kingdomName, UUID ownerUUID, int maxPlayers, int borderSize, int maxPlugins, int ram) {
+    public OfflineServer(int id, String kingdomName, UUID ownerUUID, int maxPlayers, int borderSize, int maxPlugins) {
         this.id = id;
         this.kingdomName = kingdomName;
         this.ownerUUID = ownerUUID;
         this.maxPlayers = maxPlayers;
         this.borderSize = borderSize;
         this.maxPlugins = maxPlugins;
-        this.ram = ram;
     }
 
     public int getId() {
@@ -62,13 +60,5 @@ public class OfflineServer {
 
     public void setMaxPlugins(int maxPlugins) {
         this.maxPlugins = maxPlugins;
-    }
-
-    public int getRam() {
-        return ram;
-    }
-
-    public void setRam(int ram) {
-        this.ram = ram;
     }
 }
