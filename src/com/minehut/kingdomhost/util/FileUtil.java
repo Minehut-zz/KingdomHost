@@ -1,5 +1,8 @@
 package com.minehut.kingdomhost.util;
 
+import com.minehut.api.API;
+import com.minehut.api.util.player.Rank;
+import com.minehut.commons.common.chat.F;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -33,6 +36,41 @@ public class FileUtil {
             FileOutputStream output = new FileOutputStream(propsFileName);
             props.store(output, "This description goes to the header of a file");
             output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void allocatePerks(int id, String kingdomName, Rank rank) {
+        try {
+            //Edit server.properties
+            Properties props = new Properties();
+            String propsFileName = "/home/kingdoms/kingdom" + Integer.toString(id) + "/server.properties";
+
+            /* Player Slots */
+            int playerSlots = getPlayerSlots(rank);
+            F.log(kingdomName, "Allocated Player Slots: " + Integer.toString(playerSlots));
+
+			/* World Border */
+            int worldBorder = getWorldBorder(rank);
+            F.log(kingdomName, "Allocated World Border: " + Integer.toString(worldBorder));
+
+            //first load old port:
+            FileInputStream configStream = new FileInputStream(propsFileName);
+            props.load(configStream);
+            configStream.close();
+
+            //modifies existing or adds new property
+            props.setProperty("max-players", Integer.toBinaryString(playerSlots));
+            props.setProperty("max-world-size", Integer.toBinaryString(worldBorder));
+
+            //save modified property file
+            FileOutputStream output = new FileOutputStream(propsFileName);
+            props.store(output, "This description goes to the header of a file");
+            output.close();
+
+            /* Success */
+            F.log(kingdomName, "Successfully allocated perks");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,6 +138,34 @@ public class FileUtil {
 
         } catch (IOException e) {
 
+        }
+    }
+
+    private static int getPlayerSlots(Rank rank) {
+        if (rank.has(null, Rank.Champ, false)) {
+            return 40;
+        } else if (rank.has(null, Rank.Legend, false)) {
+            return 35;
+        } else if (rank.has(null, Rank.Super, false)) {
+            return 28;
+        } else if (rank.has(null, Rank.Mega, false)) {
+            return 20;
+        } else {
+            return 10;
+        }
+    }
+
+    private static int getWorldBorder(Rank rank) {
+        if (rank.has(null, Rank.Champ, false)) {
+            return 4000;
+        } else if (rank.has(null, Rank.Legend, false)) {
+            return 3000;
+        } else if (rank.has(null, Rank.Super, false)) {
+            return 2000;
+        } else if (rank.has(null, Rank.Mega, false)) {
+            return 1000;
+        } else {
+            return 500;
         }
     }
 }

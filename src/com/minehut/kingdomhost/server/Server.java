@@ -10,6 +10,7 @@ import com.minehut.commons.common.uuid.NameFetcher;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.events.ServerShutdownEvent;
 import com.minehut.kingdomhost.offline.OfflineServer;
+import com.minehut.kingdomhost.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
+@SuppressWarnings("ALL")
 public class Server extends Thread {
 
 	private int runnableID;
@@ -88,27 +90,29 @@ public class Server extends Thread {
 				F.log("error getting player name");
 			}
 
+			/* Setup KingdomClient config */
 			this.setupClientConfig();
 
 			System.out.println("Starting server..");
 
-			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/");
+			/* Retrieve Rank */
+			Rank rank = API.getAPI().getRank(ownerUUID);
 
-			int ram = getRam(API.getAPI().getRank(ownerUUID));
-			F.log("Starting server with ram: " + Integer.toString(ram));
+			/* Ram */
+			int ram = getRam(rank);
+			F.log(this.kingdomName, "Allocated Ram: " + Integer.toString(ram));
+
+			/* Allocate Perks */
+			FileUtil.allocatePerks(kingdomID, kingdomName, rank);
+
+			/* Start Process */
+			final File executorDirectory = new File("/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/");
 			this.theProcess = Runtime.getRuntime().exec("java -XX:MaxPermSize=128M -Xmx" + Integer.toString(ram) + "M -Xms" + Integer.toString(ram) + "M -jar spigot.jar", null, executorDirectory);
 			this.pid = getPid(this.theProcess);
 
 			this.writer = new PrintWriter(new OutputStreamWriter(this.theProcess.getOutputStream()));
 			is = this.theProcess.getInputStream();
 			System.out.println("Server started, getting output");
-
-			/* Host Commands */
-			runCommand("set_id " + Integer.toString(this.getKingdomID()));
-			runCommand("set_owner_uuid " + this.ownerUUID.toString());
-			runCommand("set_owner_name " + this.ownerName);
-			runCommand("op " + this.ownerName);
-			runCommand("whitelist add " + this.ownerName);
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String line;
@@ -319,22 +323,22 @@ public class Server extends Thread {
 		}
 	}
 
-	private int getRam(Rank rank) {
-		if (rank.has(null, Rank.Champ, false)) {
-			return 5120; // 5 gb
-		} else if (rank.has(null, Rank.Legend, false)) {
-			return 3072; // 3 gb
-		} else if (rank.has(null, Rank.Super, false)) {
-			return 2048; // 2 gb
-		} else if (rank.has(null, Rank.Mega, false)) {
-			return 1536; // 1.5 gb
-		} else {
-			return 1024; // 1 gb
-		}
-	}
-
 	public int getPid() {
 		return pid;
+	}
+
+	private static int getRam(Rank rank) {
+		if (rank.has(null, Rank.Champ, false)) {
+			return 3072; // 3.0 gb
+		} else if (rank.has(null, Rank.Legend, false)) {
+			return 2048; // 2.0 gb
+		} else if (rank.has(null, Rank.Super, false)) {
+			return 1792; // 1.75 gb
+		} else if (rank.has(null, Rank.Mega, false)) {
+			return 1024; // 1.0 gb
+		} else {
+			return 768; // 0.75 gb
+		}
 	}
 
 }
