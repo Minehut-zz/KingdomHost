@@ -76,6 +76,33 @@ public class FileUtil {
         }
     }
 
+    public static String getMOTD(int id, String kingdomName, Rank rank) {
+        try {
+
+            /* Ignore for non-donors */
+            if (rank != null && rank != Rank.regular) {
+                //Edit server.properties
+                Properties props = new Properties();
+                String propsFileName = "/home/kingdoms/kingdom" + Integer.toString(id) + "/server.properties";
+
+                //first load old one:
+                FileInputStream configStream = new FileInputStream(propsFileName);
+                props.load(configStream);
+                configStream.close();
+
+                /* Select MOTD */
+                String motd = props.getProperty("motd");
+                F.log(kingdomName, "Detected MOTD: " + motd);
+
+                return motd;
+            }
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void copyFile(File source, File target) {
         try {
             ArrayList<String> ignore = new ArrayList<String>(Arrays.asList("uid.dat", "session.dat"));

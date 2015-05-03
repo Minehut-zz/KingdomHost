@@ -49,6 +49,7 @@ public class Server extends Thread {
 	private int port;
 	private int pid;
 	private UUID startupPlayer;
+	private String motd;
 
 	private ArrayList<UUID> startupPlayers;
 
@@ -97,6 +98,9 @@ public class Server extends Thread {
 
 			/* Retrieve Rank */
 			Rank rank = API.getAPI().getRank(ownerUUID);
+
+			/* MOTD */
+			this.motd = FileUtil.getMOTD(kingdomID, kingdomName, rank);
 
 			/* Ram */
 			int ram = getRam(rank);
@@ -341,4 +345,7 @@ public class Server extends Thread {
 		}
 	}
 
+	public String getMotd() {
+		return motd;
+	}
 }

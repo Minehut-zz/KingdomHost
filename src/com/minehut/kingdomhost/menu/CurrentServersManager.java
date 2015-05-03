@@ -41,13 +41,28 @@ public class CurrentServersManager implements Listener {
                 menu.clear();
 
                 for (Server server : serverManager.getServers()) {
-                    ItemStack item = ItemStackFactory.createItem(Material.SIGN, server.getKingdomName(),
-                            Arrays.asList(
-                                    "",
-                                    C.gray + "Name: " + C.yellow + server.getKingdomName(),
-                                    C.gray + "Players: " + C.yellow + Integer.toString(server.getCurrentPlayers()) + "/" + Integer.toString(server.getMaxPlayers()),
-                                    ""
-                            ));
+                    ItemStack item;
+
+                    if(server.getMotd() != null && server.getMotd() != "") {
+                        /* Donor: Include MOTD */
+                        item = ItemStackFactory.createItem(Material.SIGN, server.getKingdomName(),
+                                Arrays.asList(
+                                        "",
+                                        C.gray + "Name: " + C.yellow + server.getKingdomName(),
+                                        C.gray + "Players: " + C.yellow + Integer.toString(server.getCurrentPlayers()) + "/" + Integer.toString(server.getMaxPlayers()),
+                                        "",
+                                        C.gray + "MOTD: " + C.yellow + server.getMotd(),
+                                        ""
+                                ));
+                    } else {
+                        item = ItemStackFactory.createItem(Material.SIGN, server.getKingdomName(),
+                                Arrays.asList(
+                                        "",
+                                        C.gray + "Name: " + C.yellow + server.getKingdomName(),
+                                        C.gray + "Players: " + C.yellow + Integer.toString(server.getCurrentPlayers()) + "/" + Integer.toString(server.getMaxPlayers()),
+                                        ""
+                                ));
+                    }
 
                     menu.addItem(item);
                 }

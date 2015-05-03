@@ -6,7 +6,11 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d84bd829-c90a-43a8-8551-980c7f981158" name="Default" comment="Assign ram on startup">
+    <list default="true" id="d84bd829-c90a-43a8-8551-980c7f981158" name="Default" comment="Add Ram, Player Slots and World Border donor perks">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KingdomHost/com/minehut/kingdomhost/util/FileUtil.class" afterPath="$PROJECT_DIR$/out/production/KingdomHost/com/minehut/kingdomhost/util/FileUtil.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KingdomHost/com/minehut/kingdomhost/server/Server$1.class" afterPath="$PROJECT_DIR$/out/production/KingdomHost/com/minehut/kingdomhost/server/Server$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/KingdomHost/com/minehut/kingdomhost/server/Server.class" afterPath="$PROJECT_DIR$/out/production/KingdomHost/com/minehut/kingdomhost/server/Server.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/CurrentServersManager.java" afterPath="$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/CurrentServersManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/minehut/kingdomhost/util/FileUtil.java" afterPath="$PROJECT_DIR$/src/com/minehut/kingdomhost/util/FileUtil.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/minehut/kingdomhost/server/Server.java" afterPath="$PROJECT_DIR$/src/com/minehut/kingdomhost/server/Server.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -41,37 +45,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyKingdom.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/MyKingdom.java">
+      <file leaf-file-name="Server.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/server/Server.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="58" column="46" selection-start-line="58" selection-start-column="46" selection-end-line="58" selection-end-column="46" />
-              <folding />
+            <state vertical-scroll-proportion="-15.333333">
+              <caret line="347" column="29" selection-start-line="347" selection-start-column="29" selection-end-line="347" selection-end-column="29" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#899#923#0" expanded="true" />
+                <element signature="e#5924#5925#0" expanded="true" />
+                <element signature="e#5944#5945#0" expanded="true" />
+                <element signature="e#6839#6840#0" expanded="true" />
+                <element signature="e#6912#6913#0" expanded="true" />
+                <element signature="e#7771#7772#0" expanded="true" />
+                <element signature="e#7798#7799#0" expanded="true" />
+                <element signature="e#8269#8270#0" expanded="true" />
+                <element signature="e#8294#8295#0" expanded="true" />
+                <element signature="e#8345#8346#0" expanded="true" />
+                <element signature="e#8382#8383#0" expanded="true" />
+                <element signature="e#9030#9031#0" expanded="true" />
+                <element signature="e#9047#9048#0" expanded="true" />
+                <element signature="e#9476#9477#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Server.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/server/Server.java">
+      <file leaf-file-name="CurrentServersManager.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/CurrentServersManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.36223507">
-              <caret line="231" column="82" selection-start-line="231" selection-start-column="82" selection-end-line="231" selection-end-column="82" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#899#923#0" expanded="true" />
-                <element signature="e#5824#5825#0" expanded="true" />
-                <element signature="e#5844#5845#0" expanded="true" />
-                <element signature="e#6739#6740#0" expanded="true" />
-                <element signature="e#6812#6813#0" expanded="true" />
-                <element signature="e#7671#7672#0" expanded="true" />
-                <element signature="e#7698#7699#0" expanded="true" />
-                <element signature="e#8169#8170#0" expanded="true" />
-                <element signature="e#8194#8195#0" expanded="true" />
-                <element signature="e#8245#8246#0" expanded="true" />
-                <element signature="e#8282#8283#0" expanded="true" />
-                <element signature="e#8930#8931#0" expanded="true" />
-                <element signature="e#8947#8948#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.6868132">
+              <caret line="57" column="42" selection-start-line="57" selection-start-column="42" selection-end-line="57" selection-end-column="42" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -109,7 +114,7 @@
       <file leaf-file-name="ServerManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/manager/ServerManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.592592">
+            <state vertical-scroll-proportion="5.296296">
               <caret line="94" column="38" selection-start-line="94" selection-start-column="29" selection-end-line="94" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -122,9 +127,9 @@
         <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/util/FileUtil.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="141" column="5" selection-start-line="141" selection-start-column="5" selection-end-line="141" selection-end-column="5" />
+              <caret line="102" column="20" selection-start-line="102" selection-start-column="20" selection-end-line="102" selection-end-column="20" />
               <folding>
-                <element signature="e#3011#3019#0" expanded="true" />
+                <element signature="e#3931#3939#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -192,7 +197,6 @@
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/commands/JoinCommand.java" />
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/commands/admin/ViewPortsCommand.java" />
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/KingdomHost.java" />
-        <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/CurrentServersManager.java" />
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/MyKingdom.java" />
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/commands/CreateCommand.java" />
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/commands/RenameCommand.java" />
@@ -202,6 +206,7 @@
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/manager/ServerManager.java" />
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/util/FileUtil.java" />
         <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/server/Server.java" />
+        <option value="$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/CurrentServersManager.java" />
       </list>
     </option>
   </component>
@@ -355,6 +360,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="offline" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="KingdomHost" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="KingdomHost" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kingdomhost" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="menu" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -629,7 +656,13 @@
       <option name="project" value="LOCAL" />
       <updated>1430618065088</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Add Ram, Player Slots and World Border donor perks">
+      <created>1430655570904</created>
+      <option name="number" value="00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1430655570904</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -638,7 +671,7 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23771581" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23771581" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -685,7 +718,9 @@
     <MESSAGE value="Add multi-server capability for Refs." />
     <MESSAGE value="Finish multi-server ownership for champs/refs." />
     <MESSAGE value="Assign ram on startup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Assign ram on startup" />
+    <MESSAGE value="Add Donor Perks" />
+    <MESSAGE value="Add Ram, Player Slots and World Border donor perks" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Ram, Player Slots and World Border donor perks" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -719,18 +754,19 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -807,18 +843,19 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -895,18 +932,19 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -976,18 +1014,19 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1013,18 +1052,19 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1043,18 +1083,19 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1073,18 +1114,19 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1114,16 +1156,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="44" column="35" selection-start-line="44" selection-start-column="35" selection-end-line="44" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/CurrentServersManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="32" column="94" selection-start-line="32" selection-start-column="94" selection-end-line="32" selection-end-column="94" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1190,9 +1222,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/util/FileUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="102" column="20" selection-start-line="102" selection-start-column="20" selection-end-line="102" selection-end-column="20" />
+          <folding>
+            <element signature="e#3931#3939#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/manager/ServerManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.592592">
+        <state vertical-scroll-proportion="5.296296">
           <caret line="94" column="38" selection-start-line="94" selection-start-column="29" selection-end-line="94" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1200,36 +1242,35 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/util/FileUtil.java">
+    <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/server/Server.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="141" column="5" selection-start-line="141" selection-start-column="5" selection-end-line="141" selection-end-column="5" />
+        <state vertical-scroll-proportion="-15.333333">
+          <caret line="347" column="29" selection-start-line="347" selection-start-column="29" selection-end-line="347" selection-end-column="29" />
           <folding>
-            <element signature="e#3011#3019#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#899#923#0" expanded="true" />
+            <element signature="e#5924#5925#0" expanded="true" />
+            <element signature="e#5944#5945#0" expanded="true" />
+            <element signature="e#6839#6840#0" expanded="true" />
+            <element signature="e#6912#6913#0" expanded="true" />
+            <element signature="e#7771#7772#0" expanded="true" />
+            <element signature="e#7798#7799#0" expanded="true" />
+            <element signature="e#8269#8270#0" expanded="true" />
+            <element signature="e#8294#8295#0" expanded="true" />
+            <element signature="e#8345#8346#0" expanded="true" />
+            <element signature="e#8382#8383#0" expanded="true" />
+            <element signature="e#9030#9031#0" expanded="true" />
+            <element signature="e#9047#9048#0" expanded="true" />
+            <element signature="e#9476#9477#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/server/Server.java">
+    <entry file="file://$PROJECT_DIR$/src/com/minehut/kingdomhost/menu/CurrentServersManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.36223507">
-          <caret line="231" column="82" selection-start-line="231" selection-start-column="82" selection-end-line="231" selection-end-column="82" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#899#923#0" expanded="true" />
-            <element signature="e#5824#5825#0" expanded="true" />
-            <element signature="e#5844#5845#0" expanded="true" />
-            <element signature="e#6739#6740#0" expanded="true" />
-            <element signature="e#6812#6813#0" expanded="true" />
-            <element signature="e#7671#7672#0" expanded="true" />
-            <element signature="e#7698#7699#0" expanded="true" />
-            <element signature="e#8169#8170#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8245#8246#0" expanded="true" />
-            <element signature="e#8282#8283#0" expanded="true" />
-            <element signature="e#8930#8931#0" expanded="true" />
-            <element signature="e#8947#8948#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.6868132">
+          <caret line="57" column="42" selection-start-line="57" selection-start-column="42" selection-end-line="57" selection-end-column="42" />
+          <folding />
         </state>
       </provider>
     </entry>
