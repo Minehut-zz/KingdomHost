@@ -1,10 +1,9 @@
 package com.minehut.kingdomhost.commands;
 
-import com.minehut.api.API;
-import com.minehut.api.managers.command.Command;
-import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.items.ItemStackFactory;
+import com.minehut.core.command.Command;
+import com.minehut.core.player.Rank;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.offline.OfflineServer;
 import org.bukkit.Bukkit;

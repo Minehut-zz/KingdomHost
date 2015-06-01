@@ -1,8 +1,7 @@
 package com.minehut.kingdomhost.util;
 
-import com.minehut.api.API;
-import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.F;
+import com.minehut.core.player.Rank;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;

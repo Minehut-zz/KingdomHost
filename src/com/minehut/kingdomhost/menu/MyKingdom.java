@@ -1,9 +1,9 @@
 package com.minehut.kingdomhost.menu;
 
-import com.minehut.api.API;
-import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.items.ItemStackFactory;
+import com.minehut.core.Core;
+import com.minehut.core.player.Rank;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.manager.ServerManager;
 import com.minehut.kingdomhost.offline.OfflineServer;
@@ -49,7 +49,7 @@ public class MyKingdom implements Listener {
                         player.sendMessage(C.white + "You have not created a server yet.");
                         player.sendMessage(C.white + "Create one with " + C.aqua + "/create (name)");
                     } else {
-                        if(API.getAPI().getGamePlayer(player).getRank().has(null, Rank.Ref, false)) {
+                        if(Core.getInstance().getPlayerInfo(player).getRank().has(null, Rank.Ref, false)) {
                             player.sendMessage("");
                             player.sendMessage("Your owned servers: ");
 

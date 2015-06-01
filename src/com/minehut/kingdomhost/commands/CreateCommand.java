@@ -1,9 +1,9 @@
 package com.minehut.kingdomhost.commands;
 
-import com.minehut.api.API;
-import com.minehut.api.managers.command.Command;
-import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.chat.C;
+import com.minehut.core.Core;
+import com.minehut.core.command.Command;
+import com.minehut.core.player.Rank;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.offline.OfflineServer;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class CreateCommand extends Command {
             if (ownedServers.isEmpty()) {
                 KingdomHost.getPlugin().getServerManager().createServer(player, args.get(0));
             } else {
-                Rank rank = API.getAPI().getGamePlayer(player).getRank();
+                Rank rank = Core.getInstance().getPlayerInfo(player).getRank();
                 if (rank.has(null, Rank.Ref, false)) {
                     if(ownedServers.size() > 3) {
                         player.sendMessage("");

@@ -1,12 +1,11 @@
 package com.minehut.kingdomhost.server;
 
-import com.minehut.api.API;
-import com.minehut.api.util.player.GamePlayer;
-import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.bungee.Bungee;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.chat.F;
 import com.minehut.commons.common.uuid.NameFetcher;
+import com.minehut.core.Core;
+import com.minehut.core.player.Rank;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.events.ServerShutdownEvent;
 import com.minehut.kingdomhost.offline.OfflineServer;
@@ -21,7 +20,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.UUID;
 
 @SuppressWarnings("ALL")
@@ -97,7 +95,7 @@ public class Server extends Thread {
 			System.out.println("Starting server..");
 
 			/* Retrieve Rank */
-			Rank rank = API.getAPI().getRank(ownerUUID);
+			Rank rank = Core.getInstance().getRank(ownerUUID);
 
 			/* MOTD */
 			this.motd = FileUtil.getMOTD(kingdomID, kingdomName, rank);
@@ -164,6 +162,8 @@ public class Server extends Thread {
 						Player player = Bukkit.getPlayer(uuid);
 						if (player != null) {
 							player.sendMessage("The error " + C.red + "Port Bind" + C.white + " has occured. Please try again.");
+							player.sendMessage("Politely alert a staff member that port " + C.aqua + Integer.toString(this.port) + C.white
+								+ " is " + C.red + "faulty" + C.white + ".");
 						}
 					}
 

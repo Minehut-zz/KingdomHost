@@ -1,7 +1,5 @@
 package com.minehut.kingdomhost.manager;
 
-import com.minehut.api.API;
-import com.minehut.api.util.player.Rank;
 import com.minehut.commons.common.bungee.Bungee;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.chat.F;
