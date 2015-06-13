@@ -2,6 +2,7 @@ package com.minehut.kingdomhost.menu;
 
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.items.ItemStackFactory;
+import com.minehut.commons.common.sound.S;
 import com.minehut.core.Core;
 import com.minehut.core.player.Rank;
 import com.minehut.kingdomhost.KingdomHost;
@@ -41,6 +42,7 @@ public class MyKingdom implements Listener {
             if (player.getItemInHand().getItemMeta().getDisplayName() != null) {
                 if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(getItem().getItemMeta().getDisplayName())) {
                     event.setCancelled(true);
+                    S.click(player);
 
                     ArrayList<OfflineServer> ownedServers = serverManager.getServer(player);
                     if (ownedServers.isEmpty()) {

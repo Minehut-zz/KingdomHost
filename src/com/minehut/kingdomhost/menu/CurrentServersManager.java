@@ -3,6 +3,7 @@ package com.minehut.kingdomhost.menu;
 import com.minehut.commons.common.chat.C;
 import com.minehut.commons.common.items.EnchantGlow;
 import com.minehut.commons.common.items.ItemStackFactory;
+import com.minehut.commons.common.sound.S;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.manager.ServerManager;
 import com.minehut.kingdomhost.server.Server;
@@ -99,6 +100,7 @@ public class CurrentServersManager implements Listener {
             if (player.getItemInHand().getItemMeta().getDisplayName() != null) {
                 if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(getItem().getItemMeta().getDisplayName())) {
                     event.setCancelled(true);
+                    S.click(player);
                     player.openInventory(this.menu);
                 }
             }
