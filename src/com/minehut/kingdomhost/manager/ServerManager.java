@@ -351,9 +351,9 @@ public class ServerManager implements Listener {
 
 			for (String id : config.getConfigurationSection("kingdoms").getKeys(false)) {
 				String name = config.getString("kingdoms." + id + ".name");
-				System.out.println(name);
+//				System.out.println(name);
 				String ownerUUID = config.getString("kingdoms." + id + ".ownerUUID");
-				System.out.println("uuid: " + ownerUUID);
+//				System.out.println("uuid: " + ownerUUID);
 				int maxPlayers = config.getInt("kingdoms." + id + ".maxPlayers");
 				int borderSize = config.getInt("kingdoms." + id + ".borderSize");
 				int maxPlugins = config.getInt("kingdoms." + id + ".maxPlugins");
@@ -369,7 +369,7 @@ public class ServerManager implements Listener {
 				OfflineServer offlineServer = new OfflineServer(Integer.parseInt(id), name, UUID.fromString(ownerUUID), maxPlayers, borderSize, maxPlugins);
 				offlineServers.add(offlineServer);
 
-				System.out.println("Successfully loaded offline-server: " + name);
+//				System.out.println("Successfully loaded offline-server: " + name);
 			}
 		}
 	}

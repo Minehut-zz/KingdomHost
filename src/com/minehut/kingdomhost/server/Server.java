@@ -10,6 +10,7 @@ import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.events.ServerShutdownEvent;
 import com.minehut.kingdomhost.offline.OfflineServer;
 import com.minehut.kingdomhost.util.FileUtil;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,6 +33,8 @@ public class Server extends Thread {
 	private ProcessBuilder slave;
 	private Process theProcess;
 	private PrintWriter writer;
+
+	private String folder;
 
 	public int currentPlayers = 0;
 	public long lastUpdated;
@@ -60,6 +63,8 @@ public class Server extends Thread {
 		this.maxPlugins = maxPlugins;
 		this.ownerUUID = owner;
 		this.online = false;
+
+		this.folder = "/home/kingdoms/kingdom" + Integer.toString(this.kingdomID) + "/";
 
 		this.runnableID = 0;
 
@@ -91,6 +96,9 @@ public class Server extends Thread {
 
 			/* Setup KingdomClient config */
 			this.setupClientConfig();
+
+			/* Check for actions */
+			FileUtil.checkAndExecuteActions(this.folder);
 
 			System.out.println("Starting server..");
 
@@ -176,7 +184,7 @@ public class Server extends Thread {
 				}
 //				System.out.println("[" + this.kingdomName + "]: " + line + "\n"); //prints out server input
 			}
-			System.out.println("server closed, thread finished");
+			System.out.println("server closed, threa d finished");
 			this.callShutdownEvent();
 			this.online = false;
 		} catch (IOException e) {

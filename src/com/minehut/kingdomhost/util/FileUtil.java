@@ -60,8 +60,8 @@ public class FileUtil {
             configStream.close();
 
             //modifies existing or adds new property
-            props.setProperty("max-players", Integer.toBinaryString(playerSlots));
-            props.setProperty("max-world-size", Integer.toBinaryString(worldBorder));
+            props.setProperty("max-players", Integer.toString(playerSlots));
+            props.setProperty("max-world-size", Integer.toString(worldBorder));
 
             //save modified property file
             FileOutputStream output = new FileOutputStream(propsFileName);
@@ -164,6 +164,23 @@ public class FileUtil {
 
         } catch (IOException e) {
 
+        }
+    }
+
+    public static void checkAndExecuteActions(String folder) {
+
+        /* Reset World */
+        File resetAction = new File(folder + "actions/resetmap.action");
+        if (resetAction.exists()) {
+            File world = new File(folder + "world");
+            try {
+                FileUtils.deleteDirectory(world);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            F.log("##############################");
+            F.log("Deleted World in " + folder);
+            F.log("##############################");
         }
     }
 
