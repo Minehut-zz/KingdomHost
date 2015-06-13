@@ -175,6 +175,7 @@ public class FileUtil {
             File world = new File(folder + "world");
             try {
                 FileUtils.deleteDirectory(world);
+                resetAction.delete();
             } catch (IOException e) {
                 e.printStackTrace();
             }
