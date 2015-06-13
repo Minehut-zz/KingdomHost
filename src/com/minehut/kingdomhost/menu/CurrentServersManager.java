@@ -1,6 +1,7 @@
 package com.minehut.kingdomhost.menu;
 
 import com.minehut.commons.common.chat.C;
+import com.minehut.commons.common.items.EnchantGlow;
 import com.minehut.commons.common.items.ItemStackFactory;
 import com.minehut.kingdomhost.KingdomHost;
 import com.minehut.kingdomhost.manager.ServerManager;
@@ -30,7 +31,7 @@ public class CurrentServersManager implements Listener {
         this.host = serverManager.getHost();
         Bukkit.getServer().getPluginManager().registerEvents(this, this.host);
 
-        this.menu = Bukkit.getServer().createInventory(null, 36, C.underline + "Player Servers");
+        this.menu = Bukkit.getServer().createInventory(null, 45, C.underline + "Player Servers");
         this.updateMenu();
     }
 
@@ -54,6 +55,7 @@ public class CurrentServersManager implements Listener {
                                         C.gray + "MOTD: " + C.yellow + server.getMotd(),
                                         ""
                                 ));
+                        EnchantGlow.addGlow(item);
                     } else {
                         item = ItemStackFactory.createItem(Material.SIGN, server.getKingdomName(),
                                 Arrays.asList(
